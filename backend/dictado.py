@@ -14,10 +14,14 @@ NUM_PALABRA = {
     "cinco": 5, "seis": 6, "siete": 7, "ocho": 8, "nueve": 9, "diez": 10,
     "once": 11, "doce": 12, "trece": 13, "catorce": 14, "quince": 15,
     "dieciseis": 16, "diecisiete": 17, "dieciocho": 18, "diecinueve": 19,
-    "veinte": 20, "veinticinco": 25, "treinta": 30, "cuarenta": 40,
-    "cincuenta": 50, "sesenta": 60, "setenta": 70, "ochenta": 80,
-    "noventa": 90, "cien": 100, "ciento": 100, "doscientos": 200,
-    "quinientos": 500, "mil": 1000,
+    "veinte": 20, "veintiuno": 21, "veintiun": 21, "veintidos": 22,
+    "veintitres": 23, "veinticuatro": 24, "veinticinco": 25, "veintiseis": 26,
+    "veintisiete": 27, "veintiocho": 28, "veintinueve": 29,
+    "treinta": 30, "cuarenta": 40, "cincuenta": 50, "sesenta": 60,
+    "setenta": 70, "ochenta": 80, "noventa": 90,
+    "cien": 100, "ciento": 100, "doscientos": 200, "trescientos": 300,
+    "cuatrocientos": 400, "quinientos": 500, "seiscientos": 600,
+    "setecientos": 700, "ochocientos": 800, "novecientos": 900, "mil": 1000,
 }
 
 FRACCION = {"medio": 0.5, "media": 0.5, "cuarto": 0.25, "tres cuartos": 0.75}

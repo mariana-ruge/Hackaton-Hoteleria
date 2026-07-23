@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a2c53">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Inventario 360 · Colsubsidio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+
+<header>
+  <div class="hwrap">
+    <div class="perfil">
+      <span class="avatar" id="avatar">?</span>
+      <div class="perfil-txt">
+        <b id="perfilNombre">Inventario 360</b>
+        <span id="perfilSub">Colsubsidio · Conteo y auditoría</span>
+      </div>
+    </div>
+    <div class="hspace"></div>
+    <span class="chip" id="chipCat">Sin catálogo</span>
+    <span class="chip" id="chipSes">Sin sesión</span>
+  </div>
+</header>
+
+<nav>
+  <div class="nwrap" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-v="datos">1 · Datos</button>
+    <button class="tab" role="tab" aria-selected="false" data-v="sesion" disabled>2 · Sesión</button>
+    <button class="tab" role="tab" aria-selected="false" data-v="conteo" disabled>3 · Conteo</button>
+    <button class="tab" role="tab" aria-selected="false" data-v="auditoria" disabled>4 · Auditoría<span class="n oculto" id="badge">0</span></button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ══════════════ 1 · DATOS ══════════════ -->
+<section class="vista on" id="v-datos">
+  <h2>Cargar y limpiar datos</h2>
+  <p class="sub">Sube el catálogo en Excel o CSV. El sistema detecta el encabezado
+     aunque esté desplazado, normaliza las unidades a un formato único y convierte
+     los stocks negativos o ilegibles en <b>Sin Stock</b>.</p>
+
+  <div class="card">
+    <h3>Tipo de archivo</h3>
+    <div class="fila" style="margin-bottom:14px">
+      <label style="display:flex;align-items:center;gap:8px;margin:0;
+             text-transform:none;font-size:14px;letter-spacing:0;cursor:pointer">
+        <input type="radio" name="modo" value="catalogo" checked style="width:auto">
+        Catálogo de productos
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;margin:0;
+             text-transform:none;font-size:14px;letter-spacing:0;cursor:pointer">
+        <input type="radio" name="modo" value="bodegas" style="width:auto">
+        Maestro de bodegas
+      </label>
+    </div>
+    <div class="drop" id="drop">
+      <div class="ico">⬒</div>
+      <b>Arrastra el archivo o toca para elegir</b>
+      <small>Excel (.xlsx, .xls) o CSV · máximo 32 MB</small>
+      <input type="file" id="archivo" accept=".xlsx,.xls,.xlsm,.csv,.tsv" hidden>
+    </div>
+  </div>
+
+  <div id="resDatos"></div>
+</section>
+
+<!-- ══════════════ 2 · SESIÓN ══════════════ -->
+<section class="vista" id="v-sesion">
+  <h2>Abrir sesión de conteo</h2>
+    <p class="sub">La toma física se abre una bodega por sesión. La auditoría es obligatoria,
+      y el sistema usa el catálogo e histórico de esa bodega para validar cada conteo en tiempo real.</p>
+
+  <div class="card">
+    <h3>Participantes</h3>
+    <div class="grid g2" style="margin-bottom:14px">
+      <div>
+        <label for="selBodega">Bodega</label>
+        <select id="selBodega"><option value="">Selecciona una bodega</option></select>
+      </div>
+      <div>
+        <label for="nAud">Auditor</label>
+        <input id="nAud" placeholder="Nombre del auditor">
+      </div>
+    </div>
+    <label>Contadores</label>
+    <div class="grid g3" style="margin-bottom:8px">
+      <input id="c1" placeholder="Contador 1">
+      <input id="c2" placeholder="Contador 2 (opcional)">
+      <input id="c3" placeholder="Contador 3 (opcional)">
+    </div>
+    <p class="pista">Con dos o más contadores el sistema compara los conteos: si
+       difieren más de 5 % ordena un reconteo automático.</p>
+    <div class="fila" style="margin-top:16px">
+      <button class="b-pri" id="btnSesion">Abrir sesión</button>
+    </div>
+  </div>
+
+  <div class="card" id="ctxBodega">
+    <h3>Contexto de la bodega</h3>
+    <div class="vacio-msg" style="padding:28px 20px">
+      <div class="ico">◫</div>
+      <b>Selecciona una bodega</b>
+      <span>Verás cuántas referencias y existencias históricas se usarán para validar el conteo.</span>
+    </div>
+  </div>
+
+  <div id="resSesion"></div>
+</section>
+
+<!-- ══════════════ 3 · CONTEO ══════════════ -->
+<section class="vista" id="v-conteo">
+  <h2>Dictado de conteo</h2>
+  <p class="sub">Escribe o dicta el conteo. La unidad se verifica contra el catálogo
+     antes de registrar nada.</p>
+
+  <div class="consola">
+    <div class="turno">
+      <span style="font-size:11px;color:var(--texto-secundario);text-transform:uppercase;
+            letter-spacing:.1em;font-weight:600">Turno de</span>
+      <span class="qui" id="quien">—</span>
+      <div class="hspace"></div>
+      <button class="b-sec" id="btnVoz" style="padding:8px 14px;min-height:38px;
+              font-size:13px">🎙 Dictar</button>
+    </div>
+    <input id="dictado" class="mono" autocomplete="off"
+           placeholder="Arroz Doña Pepa, kilogramos, 25.5">
+    <div class="vp" id="vp">
+      <div><div class="k">Producto</div><div class="v" id="vpP">—</div></div>
+      <div><div class="k">Unidad</div><div class="v" id="vpU">—</div></div>
+      <div><div class="k">Cantidad</div><div class="v" id="vpC">—</div></div>
+      <div><div class="k">En catálogo</div><div class="v" id="vpS">—</div></div>
+    </div>
+    <p class="pista">Formato: <code>producto, unidad, cantidad</code> ·
+       También acepta <code>Azúcar Morena 25 kilos</code> o
+       <code>Harina, KGS, dos y medio</code></p>
+    <div class="fila" style="margin-top:14px">
+      <button class="b-pri" id="btnRegistrar">Registrar conteo</button>
+      <button class="b-sec" id="btnLimpiar">Borrar</button>
+    </div>
+  </div>
+
+  <div id="resConteo"></div>
+
+  <div class="card">
+    <h3>Registros de la sesión</h3>
+    <div id="tablaRegistros"></div>
+  </div>
+
+  <div class="card">
+    <h3>Bitácora</h3>
+    <div class="log" id="log"><div style="color:var(--texto-secundario)">Sin movimientos.</div></div>
+  </div>
+</section>
+
+<!-- ══════════════ 4 · AUDITORÍA ══════════════ -->
+<section class="vista" id="v-auditoria">
+  <h2>Dictamen del auditor</h2>
+  <p class="sub">Ningún registro se cierra sin dictamen. La sesión permanece abierta
+     mientras quede algo sin aprobar.</p>
+  <div id="resumenAud"></div>
+  <div id="listaAud"></div>
+  <div class="fila" style="margin-top:18px">
+    <button class="b-ok" id="btnCerrar">Cerrar sesión</button>
+    <button class="b-sec" id="btnDescargar">Descargar datos limpios</button>
+  </div>
+</section>
+
+</main>
+
+<div id="toast"></div>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>

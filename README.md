@@ -1,30 +1,56 @@
-# Sistema de Inventario con Dictado y Auditoría
+# Inventario 360 · Colsubsidio
 
 Carga, limpia y valida inventarios dictados por voz, con auditoría obligatoria.
 
-## Instalación
+## Arquitectura
 
 ```text
 reto-cocina/
-├── app.py                 CLI (bodegas | limpiar | sesion | demo)
-├── server.py              Servidor web Flask
-├── index.html             Plantilla usada por la interfaz web
-├── unidades.py            Catálogo canónico, sinónimos, conversiones
-├── limpieza.py            Carga y limpieza de Excel/CSV
-├── bodegas.py             Limpieza del maestro de bodegas
-├── dictado.py             Parser de voz + matching difuso
-├── validacion.py          Bloqueo por unidad + umbral de anomalía
-└── auditoria.py           Sesiones, consenso, dictamen, bitácora
+├── backend/                Servidor Flask + lógica de dominio (Python)
+│   ├── app.py               CLI (bodegas | limpiar | sesion | demo)
+│   ├── server.py            Servidor web Flask · API REST
+│   ├── unidades.py          Catálogo canónico, sinónimos, conversiones
+│   ├── limpieza.py          Carga y limpieza de Excel/CSV
+│   ├── bodegas.py           Limpieza del maestro de bodegas
+│   ├── dictado.py           Parser de voz + matching difuso
+│   ├── validacion.py        Bloqueo por unidad + umbral de anomalía
+│   ├── auditoria.py         Sesiones, consenso, dictamen, bitácora
+│   └── requirements.txt
+├── frontend/                Interfaz web servida por Flask
+│   ├── index.html            Plantilla (estructura de la app)
+│   └── static/
+│       ├── css/
+│       │   ├── tokens.css     Design tokens Colsubsidio (color, radio, sombra)
+│       │   └── app.css        Estilos de componentes
+│       ├── js/
+│       │   └── app.js         Lógica de interfaz (fetch a la API)
+│       └── img/
+├── data/                    Datos de ejemplo (Excel de apoyo)
+└── venv/                    Entorno virtual de Python (no versionar)
 ```
 
+## Instalación
+
+```bash
+python -m venv venv
+venv\Scripts\activate          # Windows
+pip install -r backend/requirements.txt
+```
+
+## Uso por línea de comandos
+
+```bash
+# Limpiar un catálogo
+python backend/app.py limpiar catalogo.xlsx
+
 # 3. Sesión de conteo con auditoría
-python app.py sesion catalogo.xlsx \
+python backend/app.py sesion catalogo.xlsx \
     --bodega "almacen general" \
     --contadores "Ana Torres,Luis Pérez" \
     --auditor "Carmen Díaz"
 
 # Demostración completa
-python app.py demo
+python backend/app.py demo
 ```
 
 ---
@@ -160,22 +186,10 @@ quién contó, cuánto, cuándo, quién auditó y con qué comentario.
 
 ---
 
-## Estructura
-
-```
-inv/
-├── app.py                 CLI (bodegas | limpiar | sesion | demo)
-├── demo.py                Demostración end-to-end
-└── core/
-    ├── unidades.py        Catálogo canónico, sinónimos, conversiones
-    ├── limpieza.py        Carga y limpieza de Excel/CSV
-    ├── bodegas.py         Limpieza del maestro de bodegas
-    ├── dictado.py         Parser de voz + matching difuso
-    ├── validacion.py      Bloqueo por unidad + umbral de anomalía
-    └── auditoria.py       Sesiones, consenso, dictamen, bitácora
-```
-
 ## Integración
+
+Los módulos del backend son importables directamente (import plano, sin
+paquete) siempre que se ejecuten desde dentro de `backend/`:
 
 ```python
 from limpieza import limpiar
@@ -205,9 +219,12 @@ ses.exportar("bitacora.json")
 ## Interfaz web
 
 ```bash
-pip install flask pandas openpyxl
-python server.py        # →  http://localhost:5000
+pip install -r backend/requirements.txt
+python backend/server.py        # →  http://localhost:5000
 ```
+
+El servidor sirve la plantilla y los estáticos desde `frontend/`
+(`template_folder` / `static_folder` apuntan ahí en `backend/server.py`).
 
 Cuatro pasos, en orden, con las pestañas siguientes bloqueadas hasta completar
 la anterior:

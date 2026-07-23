@@ -1,415 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a2c53">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Inventario · Conteo y auditoría</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --tinta:#12161c;      /* fondo profundo */
-  --panel:#1b212b;      /* superficie */
-  --panel-2:#232b38;    /* superficie elevada */
-  --linea:#333d4d;
-  --texto:#e8edf4;
-  --tenue:#8f9cb0;
-  --ambar:#ffb020;      /* acento primario: señal industrial */
-  --verde:#3ecf8e;
-  --rojo:#ff5a5f;
-  --azul:#5aa9ff;
-  --r:6px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-text-size-adjust:100%}
-body{
-  background:var(--tinta);color:var(--texto);
-  font-family:'Archivo',system-ui,sans-serif;font-size:15px;line-height:1.5;
-  padding-bottom:env(safe-area-inset-bottom);
-}
-.mono{font-family:'JetBrains Mono',ui-monospace,monospace}
-
-/* ── Encabezado ───────────────────────────── */
-header{
-  border-bottom:1px solid var(--linea);background:var(--panel);
-  position:sticky;top:0;z-index:50;
-}
-.hwrap{max-width:1240px;margin:0 auto;padding:14px 20px;
-  display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.marca{display:flex;align-items:baseline;gap:10px}
-.marca b{font-size:18px;font-weight:800;letter-spacing:-.02em}
-.marca span{font-size:11px;color:var(--tenue);text-transform:uppercase;
-  letter-spacing:.14em;font-weight:600}
-.chip{
-  font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 9px;
-  border:1px solid var(--linea);border-radius:var(--r);color:var(--tenue);
-}
-.chip.on{border-color:var(--verde);color:var(--verde)}
-.hspace{flex:1}
-
-/* ── Pestañas ─────────────────────────────── */
-nav{border-bottom:1px solid var(--linea);background:var(--panel);
-  position:sticky;top:57px;z-index:49;overflow-x:auto}
-.nwrap{max-width:1240px;margin:0 auto;padding:0 20px;display:flex;gap:2px}
-.tab{
-  background:none;border:0;border-bottom:2px solid transparent;color:var(--tenue);
-  font-family:inherit;font-size:13px;font-weight:600;letter-spacing:.04em;
-  padding:13px 16px;cursor:pointer;white-space:nowrap;text-transform:uppercase;
-}
-.tab:hover:not(:disabled){color:var(--texto)}
-.tab[aria-selected=true]{color:var(--ambar);border-bottom-color:var(--ambar)}
-.tab:disabled{opacity:.32;cursor:not-allowed}
-.tab .n{font-family:'JetBrains Mono',monospace;font-size:10px;
-  background:var(--rojo);color:#fff;border-radius:9px;padding:1px 6px;margin-left:6px}
-
-main{max-width:1240px;margin:0 auto;padding:26px 20px 80px}
-.vista{display:none}.vista.on{display:block}
-
-h2{font-size:19px;font-weight:700;letter-spacing:-.01em;margin-bottom:5px}
-.sub{color:var(--tenue);font-size:13px;margin-bottom:20px;max-width:62ch}
-
-.card{background:var(--panel);border:1px solid var(--linea);
-  border-radius:var(--r);padding:20px;margin-bottom:16px}
-.card h3{font-size:12px;font-weight:700;text-transform:uppercase;
-  letter-spacing:.12em;color:var(--tenue);margin-bottom:14px}
-
-/* ── Formularios ──────────────────────────── */
-label{display:block;font-size:11px;font-weight:600;color:var(--tenue);
-  text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
-input,select,textarea{
-  width:100%;background:var(--tinta);border:1px solid var(--linea);
-  border-radius:var(--r);color:var(--texto);font-family:inherit;font-size:15px;
-  padding:11px 13px;
-}
-input:focus,select:focus,textarea:focus{outline:2px solid var(--ambar);
-  outline-offset:-1px;border-color:var(--ambar)}
-.grid{display:grid;gap:14px}
-.g2{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
-.g3{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
-
-button{font-family:inherit;cursor:pointer;border-radius:var(--r);
-  font-weight:600;font-size:14px;border:1px solid transparent;
-  padding:11px 18px;min-height:44px;transition:filter .12s}
-button:hover:not(:disabled){filter:brightness(1.12)}
-button:disabled{opacity:.4;cursor:not-allowed}
-.b-pri{background:var(--ambar);color:#151a21}
-.b-sec{background:transparent;border-color:var(--linea);color:var(--texto)}
-.b-ok{background:var(--verde);color:#0d1f17}
-.b-no{background:var(--rojo);color:#fff}
-.fila{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-
-/* ── Zona de carga ────────────────────────── */
-.drop{
-  border:2px dashed var(--linea);border-radius:var(--r);padding:44px 20px;
-  text-align:center;cursor:pointer;transition:.15s;background:var(--panel)
-}
-.drop:hover,.drop.activo{border-color:var(--ambar);background:var(--panel-2)}
-.drop .ico{font-size:30px;margin-bottom:10px;opacity:.5}
-.drop b{display:block;font-size:16px;margin-bottom:4px}
-.drop small{color:var(--tenue)}
-
-/* ── Métricas ─────────────────────────────── */
-.mets{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;
-  background:var(--linea);border:1px solid var(--linea);border-radius:var(--r);
-  overflow:hidden;margin-bottom:16px}
-.met{background:var(--panel);padding:14px 16px}
-.met.clickable{cursor:pointer;transition:background .12s,border-color .12s,transform .12s;position:relative}
-.met.clickable:hover{background:var(--panel-2);transform:translateY(-1px)}
-.met.clickable.activa{outline:1px solid var(--ambar);background:var(--panel-2)}
-.met.compacta{padding:12px 14px;min-width:120px}
-.met .v{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;
-  line-height:1.1}
-.met .k{font-size:10px;color:var(--tenue);text-transform:uppercase;
-  letter-spacing:.1em;margin-top:5px;font-weight:600}
-.met.alerta .v{color:var(--ambar)}
-.met.mal .v{color:var(--rojo)}
-.met.bien .v{color:var(--verde)}
-
-/* ── Tablas ───────────────────────────────── */
-.tabla-wrap{overflow-x:auto;border:1px solid var(--linea);border-radius:var(--r)}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{background:var(--panel-2);text-align:left;padding:10px 13px;font-size:10px;
-  text-transform:uppercase;letter-spacing:.1em;color:var(--tenue);font-weight:700;
-  white-space:nowrap;position:sticky;top:0}
-td{padding:10px 13px;border-top:1px solid var(--linea);vertical-align:top}
-tbody tr:hover{background:var(--panel-2)}
-td.num{font-family:'JetBrains Mono',monospace;text-align:right;white-space:nowrap}
-tr.fila-clic{cursor:pointer}
-tr.fila-clic.activa-fila{background:var(--panel-2);box-shadow:inset 2px 0 0 var(--ambar)}
-
-/* ── Etiquetas de estado ──────────────────── */
-.et{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;
-  font-weight:700;padding:3px 8px;border-radius:3px;letter-spacing:.06em;
-  text-transform:uppercase;white-space:nowrap}
-.et-ok{background:rgba(62,207,142,.16);color:var(--verde)}
-.et-warn{background:rgba(255,176,32,.16);color:var(--ambar)}
-.et-mal{background:rgba(255,90,95,.16);color:var(--rojo)}
-.et-info{background:rgba(90,169,255,.16);color:var(--azul)}
-.et-gris{background:rgba(143,156,176,.14);color:var(--tenue)}
-
-/* ── Consola de dictado (elemento distintivo) ── */
-.consola{
-  background:linear-gradient(180deg,var(--panel-2),var(--panel));
-  border:1px solid var(--linea);border-left:3px solid var(--ambar);
-  border-radius:var(--r);padding:20px;margin-bottom:16px
-}
-.turno{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.turno .qui{font-family:'JetBrains Mono',monospace;font-size:12px;
-  background:var(--ambar);color:#151a21;padding:4px 10px;border-radius:3px;
-  font-weight:700}
-#dictado{font-family:'JetBrains Mono',monospace;font-size:17px;padding:15px;
-  min-height:54px}
-.pista{font-size:12px;color:var(--tenue);margin-top:9px}
-.pista code{background:var(--panel-2);padding:2px 6px;border-radius:3px;
-  font-family:'JetBrains Mono',monospace;font-size:11px}
-
-/* Vista previa en vivo del dictado */
-.vp{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-  gap:1px;background:var(--linea);border:1px solid var(--linea);
-  border-radius:var(--r);overflow:hidden;margin-top:14px}
-.vp div{background:var(--panel);padding:10px 13px}
-.vp .k{font-size:9px;color:var(--tenue);text-transform:uppercase;
-  letter-spacing:.1em;font-weight:700;margin-bottom:3px}
-.vp .v{font-family:'JetBrains Mono',monospace;font-size:14px;
-  overflow:hidden;text-overflow:ellipsis}
-.vp .v.vacio{color:var(--rojo)}
-
-/* ── Aviso de bloqueo ─────────────────────── */
-.bloqueo{
-  background:rgba(255,90,95,.09);border:1px solid var(--rojo);
-  border-left:4px solid var(--rojo);border-radius:var(--r);
-  padding:18px;margin-bottom:16px
-}
-.bloqueo .tit{display:flex;align-items:center;gap:9px;font-weight:700;
-  color:var(--rojo);margin-bottom:9px;font-size:13px;
-  text-transform:uppercase;letter-spacing:.08em}
-.bloqueo .msg{font-size:15px;margin-bottom:15px;line-height:1.55}
-.bloqueo .campos{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
-.bloqueo .campos>div{flex:1;min-width:130px}
-
-.aviso{background:rgba(255,176,32,.09);border:1px solid var(--ambar);
-  border-radius:var(--r);padding:13px 16px;margin-bottom:14px;font-size:13px}
-.aviso.mal{background:rgba(255,90,95,.09);border-color:var(--rojo)}
-.aviso.bien{background:rgba(62,207,142,.09);border-color:var(--verde)}
-
-/* ── Bitácora ─────────────────────────────── */
-.log{font-family:'JetBrains Mono',monospace;font-size:12px;
-  max-height:280px;overflow-y:auto;background:var(--tinta);
-  border:1px solid var(--linea);border-radius:var(--r);padding:13px}
-.log div{padding:3px 0;border-bottom:1px solid rgba(51,61,77,.4);
-  display:flex;gap:9px}
-.log div:last-child{border:0}
-.log .t{color:var(--tenue);flex-shrink:0}
-.log .a{color:var(--ambar);flex-shrink:0;min-width:88px}
-
-/* ── Auditoría ────────────────────────────── */
-.aud{background:var(--panel);border:1px solid var(--linea);
-  border-radius:var(--r);padding:18px;margin-bottom:12px}
-.aud.grave{border-left:3px solid var(--rojo)}
-.aud.media{border-left:3px solid var(--ambar)}
-.aud.leve{border-left:3px solid var(--verde)}
-.aud .cab{display:flex;justify-content:space-between;gap:12px;
-  align-items:flex-start;margin-bottom:13px;flex-wrap:wrap}
-.aud .nom{font-size:16px;font-weight:700}
-.cifras{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:14px;
-  font-family:'JetBrains Mono',monospace;font-size:13px}
-.cifras b{display:block;font-size:9px;color:var(--tenue);font-weight:700;
-  text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px;
-  font-family:'Archivo',sans-serif}
-
-.vacio-msg{text-align:center;padding:52px 20px;color:var(--tenue)}
-.vacio-msg .ico{font-size:34px;opacity:.35;margin-bottom:12px}
-.vacio-msg b{display:block;color:var(--texto);font-size:16px;margin-bottom:5px}
-
-.oculto{display:none!important}
-.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--linea);
-  border-top-color:var(--ambar);border-radius:50%;animation:g .7s linear infinite;
-  vertical-align:-2px;margin-right:7px}
-@keyframes g{to{transform:rotate(360deg)}}
-
-#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);
-  background:var(--panel-2);border:1px solid var(--linea);border-radius:var(--r);
-  padding:13px 20px;font-size:14px;z-index:200;transition:transform .22s;
-  box-shadow:0 8px 26px rgba(0,0,0,.45);max-width:calc(100vw - 40px)}
-#toast.on{transform:translateX(-50%) translateY(0)}
-#toast.bien{border-color:var(--verde)}
-#toast.mal{border-color:var(--rojo)}
-
-@media (max-width:640px){
-  main{padding:18px 14px 70px}
-  .hwrap,.nwrap{padding-left:14px;padding-right:14px}
-  .card{padding:15px}
-  nav{top:53px}
-}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-</style>
-<link rel="stylesheet" href="/static/mobile.css">
-</head>
-<body>
-
-<header>
-  <div class="hwrap">
-    <div class="marca"><b>INVENTARIO</b><span>Conteo y auditoría</span></div>
-    <div class="hspace"></div>
-    <span class="chip" id="chipCat">Sin catálogo</span>
-    <span class="chip" id="chipSes">Sin sesión</span>
-  </div>
-</header>
-
-<nav>
-  <div class="nwrap" role="tablist">
-    <button class="tab" role="tab" aria-selected="true" data-v="datos">1 · Datos</button>
-    <button class="tab" role="tab" aria-selected="false" data-v="sesion" disabled>2 · Sesión</button>
-    <button class="tab" role="tab" aria-selected="false" data-v="conteo" disabled>3 · Conteo</button>
-    <button class="tab" role="tab" aria-selected="false" data-v="auditoria" disabled>4 · Auditoría<span class="n oculto" id="badge">0</span></button>
-  </div>
-</nav>
-
-<main>
-
-<!-- ══════════════ 1 · DATOS ══════════════ -->
-<section class="vista on" id="v-datos">
-  <h2>Cargar y limpiar datos</h2>
-  <p class="sub">Sube el catálogo en Excel o CSV. El sistema detecta el encabezado
-     aunque esté desplazado, normaliza las unidades a un formato único y convierte
-     los stocks negativos o ilegibles en <b>Sin Stock</b>.</p>
-
-  <div class="card">
-    <h3>Tipo de archivo</h3>
-    <div class="fila" style="margin-bottom:14px">
-      <label style="display:flex;align-items:center;gap:8px;margin:0;
-             text-transform:none;font-size:14px;letter-spacing:0;cursor:pointer">
-        <input type="radio" name="modo" value="catalogo" checked style="width:auto">
-        Catálogo de productos
-      </label>
-      <label style="display:flex;align-items:center;gap:8px;margin:0;
-             text-transform:none;font-size:14px;letter-spacing:0;cursor:pointer">
-        <input type="radio" name="modo" value="bodegas" style="width:auto">
-        Maestro de bodegas
-      </label>
-    </div>
-    <div class="drop" id="drop">
-      <div class="ico">⬒</div>
-      <b>Arrastra el archivo o toca para elegir</b>
-      <small>Excel (.xlsx, .xls) o CSV · máximo 32 MB</small>
-      <input type="file" id="archivo" accept=".xlsx,.xls,.xlsm,.csv,.tsv" hidden>
-    </div>
-  </div>
-
-  <div id="resDatos"></div>
-</section>
-
-<!-- ══════════════ 2 · SESIÓN ══════════════ -->
-<section class="vista" id="v-sesion">
-  <h2>Abrir sesión de conteo</h2>
-    <p class="sub">La toma física se abre una bodega por sesión. La auditoría es obligatoria,
-      y el sistema usa el catálogo e histórico de esa bodega para validar cada conteo en tiempo real.</p>
-
-  <div class="card">
-    <h3>Participantes</h3>
-    <div class="grid g2" style="margin-bottom:14px">
-      <div>
-        <label for="selBodega">Bodega</label>
-        <select id="selBodega"><option value="">Selecciona una bodega</option></select>
-      </div>
-      <div>
-        <label for="nAud">Auditor</label>
-        <input id="nAud" placeholder="Nombre del auditor">
-      </div>
-    </div>
-    <label>Contadores</label>
-    <div class="grid g3" style="margin-bottom:8px">
-      <input id="c1" placeholder="Contador 1">
-      <input id="c2" placeholder="Contador 2 (opcional)">
-      <input id="c3" placeholder="Contador 3 (opcional)">
-    </div>
-    <p class="pista">Con dos o más contadores el sistema compara los conteos: si
-       difieren más de 5 % ordena un reconteo automático.</p>
-    <div class="fila" style="margin-top:16px">
-      <button class="b-pri" id="btnSesion">Abrir sesión</button>
-    </div>
-  </div>
-
-  <div class="card" id="ctxBodega">
-    <h3>Contexto de la bodega</h3>
-    <div class="vacio-msg" style="padding:28px 20px">
-      <div class="ico">◫</div>
-      <b>Selecciona una bodega</b>
-      <span>Verás cuántas referencias y existencias históricas se usarán para validar el conteo.</span>
-    </div>
-  </div>
-
-  <div id="resSesion"></div>
-</section>
-
-<!-- ══════════════ 3 · CONTEO ══════════════ -->
-<section class="vista" id="v-conteo">
-  <h2>Dictado de conteo</h2>
-  <p class="sub">Escribe o dicta el conteo. La unidad se verifica contra el catálogo
-     antes de registrar nada.</p>
-
-  <div class="consola">
-    <div class="turno">
-      <span style="font-size:11px;color:var(--tenue);text-transform:uppercase;
-            letter-spacing:.1em;font-weight:600">Turno de</span>
-      <span class="qui" id="quien">—</span>
-      <div class="hspace"></div>
-      <button class="b-sec" id="btnVoz" style="padding:8px 14px;min-height:38px;
-              font-size:13px">🎙 Dictar</button>
-    </div>
-    <input id="dictado" class="mono" autocomplete="off"
-           placeholder="Arroz Doña Pepa, kilogramos, 25.5">
-    <div class="vp" id="vp">
-      <div><div class="k">Producto</div><div class="v" id="vpP">—</div></div>
-      <div><div class="k">Unidad</div><div class="v" id="vpU">—</div></div>
-      <div><div class="k">Cantidad</div><div class="v" id="vpC">—</div></div>
-      <div><div class="k">En catálogo</div><div class="v" id="vpS">—</div></div>
-    </div>
-    <p class="pista">Formato: <code>producto, unidad, cantidad</code> ·
-       También acepta <code>Azúcar Morena 25 kilos</code> o
-       <code>Harina, KGS, dos y medio</code></p>
-    <div class="fila" style="margin-top:14px">
-      <button class="b-pri" id="btnRegistrar">Registrar conteo</button>
-      <button class="b-sec" id="btnLimpiar">Borrar</button>
-    </div>
-  </div>
-
-  <div id="resConteo"></div>
-
-  <div class="card">
-    <h3>Registros de la sesión</h3>
-    <div id="tablaRegistros"></div>
-  </div>
-
-  <div class="card">
-    <h3>Bitácora</h3>
-    <div class="log" id="log"><div style="color:var(--tenue)">Sin movimientos.</div></div>
-  </div>
-</section>
-
-<!-- ══════════════ 4 · AUDITORÍA ══════════════ -->
-<section class="vista" id="v-auditoria">
-  <h2>Dictamen del auditor</h2>
-  <p class="sub">Ningún registro se cierra sin dictamen. La sesión permanece abierta
-     mientras quede algo sin aprobar.</p>
-  <div id="resumenAud"></div>
-  <div id="listaAud"></div>
-  <div class="fila" style="margin-top:18px">
-    <button class="b-ok" id="btnCerrar">Cerrar sesión</button>
-    <button class="b-sec" id="btnDescargar">Descargar datos limpios</button>
-  </div>
-</section>
-
-</main>
-
-<div id="toast"></div>
-
-<script>
+/* ============================================================
+   INVENTARIO 360 · COLSUBSIDIO
+   Lógica de interfaz: navegación por pestañas, carga y limpieza
+   de archivos, sesión de conteo con dictado y auditoría.
+   Consume la API expuesta por backend/server.py.
+   ============================================================ */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const S={catalogo:null,reporteCarga:null,correccionesCarga:[],sesion:null,contadores:[],auditor:'',turno:0,bloqueo:null,filtroDatos:'productos',filtroBodegas:'todas',bodegaSelId:null};
 
@@ -417,6 +11,8 @@ function toast(m,t=''){const e=$('#toast');e.textContent=m;e.className='on '+t;
   clearTimeout(e._t);e._t=setTimeout(()=>e.className='',3400);}
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const iniciales=nombre=>(String(nombre||'').trim().split(/\s+/).slice(0,2)
+  .map(p=>p[0]?.toUpperCase()||'').join('')||'?');
 
 async function api(url,opt={}){
   const r=await fetch(url,opt);
@@ -522,11 +118,11 @@ function renderDetalleFiltro(){
   if(!d||S.filtroDatos==='productos')return '';
   const items=d.items||[];
   return `<div class="card"><h3>${esc(d.titulo)}</h3>
-    ${items.length?`<div style="max-height:220px;overflow-y:auto;font-size:13px">${items.map(x=>`<div style="padding:8px 0;border-bottom:1px solid var(--linea)">
+    ${items.length?`<div style="max-height:220px;overflow-y:auto;font-size:13px">${items.map(x=>`<div style="padding:8px 0;border-bottom:1px solid var(--gris-borde)">
       <span class="mono">${esc(x.codigo||'Sin código')}</span>${x.hoja?` <span class="et et-info">${esc(x.hoja)}</span>`:''}
       ${x.producto?` · <b>${esc(x.producto)}</b>`:''}
-      <div style="color:var(--tenue)">${esc(x.bodega||'Sin bodega')}${x.unidad?` · ${esc(x.unidad)}`:''}${x.valor_original!=null?` · valor original: ${esc(x.valor_original)}`:''}${x.causa?` · ${esc(x.causa)}`:''}${x.observaciones?` · ${esc(x.observaciones)}`:''}</div>
-    </div>`).join('')}</div>`:'<div style="color:var(--tenue)">No hay elementos para este filtro.</div>'}
+      <div style="color:var(--texto-secundario)">${esc(x.bodega||'Sin bodega')}${x.unidad?` · ${esc(x.unidad)}`:''}${x.valor_original!=null?` · valor original: ${esc(x.valor_original)}`:''}${x.causa?` · ${esc(x.causa)}`:''}${x.observaciones?` · ${esc(x.observaciones)}`:''}</div>
+    </div>`).join('')}</div>`:'<div style="color:var(--texto-secundario)">No hay elementos para este filtro.</div>'}
   </div>`;
 }
 
@@ -552,17 +148,17 @@ function pintarCatalogo(d){
   renderContextoBodega(sel.value);
 
   const filas=filasFiltradasDatos().map(f=>`<tr>
-    <td class="mono" style="color:var(--tenue)">${esc(f.codigo)}</td>
+    <td class="mono" style="color:var(--texto-secundario)">${esc(f.codigo)}</td>
     <td>${esc(f.producto)}</td>
-    <td style="color:var(--tenue);font-size:12px">${esc(f.bodega)}</td>
+    <td style="color:var(--texto-secundario);font-size:12px">${esc(f.bodega)}</td>
     <td><span class="et et-info">${esc(f.unidad)}</span>
         ${f.unidad_original&&f.unidad_original!==f.unidad
-          ?`<div style="font-size:10px;color:var(--tenue);margin-top:3px"
+          ?`<div style="font-size:10px;color:var(--texto-secundario);margin-top:3px"
              class="mono">antes: ${esc(f.unidad_original)}</div>`:''}</td>
     <td class="num">${Number(f.stock_disponible).toLocaleString('es-CO')}</td>
     <td><span class="et ${f.estado_stock==='OK'?'et-ok':'et-gris'}">
         ${esc(f.estado_stock)}</span></td>
-    <td style="font-size:11px;color:var(--tenue);max-width:280px">
+    <td style="font-size:11px;color:var(--texto-secundario);max-width:280px">
         ${esc(f.observaciones)}</td></tr>`).join('');
 
   $('#resDatos').innerHTML=`
@@ -583,13 +179,13 @@ function pintarCatalogo(d){
         ${met(r.coherencia_modelo.criticos||0,'Críticos estadísticos',(r.coherencia_modelo.criticos||0)?'mal':'')}
       </div>
       <div class="aviso">Se aplicó un score de coherencia basado en mediana, IQR y MAD sobre artículos comparables entre bodegas para señalar cantidades atípicas antes del conteo.</div>
-      ${r.coherencia_modelo.detalle?.length?`<div style="max-height:220px;overflow-y:auto;font-size:13px">${r.coherencia_modelo.detalle.slice(0,60).map(x=>`<div style="padding:8px 0;border-bottom:1px solid var(--linea)">
+      ${r.coherencia_modelo.detalle?.length?`<div style="max-height:220px;overflow-y:auto;font-size:13px">${r.coherencia_modelo.detalle.slice(0,60).map(x=>`<div style="padding:8px 0;border-bottom:1px solid var(--gris-borde)">
         <span class="mono">${esc(x.codigo||'Sin código')}</span> · <b>${esc(x.producto)}</b>
-        <div style="color:var(--tenue)">${esc(x.bodega)} · ${esc(x.clasificacion)} · score ${esc(x.score)} · ${esc(x.detalle)}</div>
+        <div style="color:var(--texto-secundario)">${esc(x.bodega)} · ${esc(x.clasificacion)} · score ${esc(x.score)} · ${esc(x.detalle)}</div>
       </div>`).join('')}</div>`:''}
     </div>`:''}
         <div class="card"><h3>Filtro activo</h3><div class="fila">
-      <span class="chip mono" style="border-color:var(--ambar);color:var(--ambar)">${esc({productos:'Todos los productos',negativos:'Negativos eliminados',unidades_corregidas:'Unidades normalizadas',unidades_desconocidas:'Unidad desconocida',duplicados:'Duplicados',descartadas:'Filas descartadas'}[S.filtroDatos]||'Todos los productos')}</span>
+      <span class="chip mono" style="border-color:var(--amarillo);color:#c98300">${esc({productos:'Todos los productos',negativos:'Negativos eliminados',unidades_corregidas:'Unidades normalizadas',unidades_desconocidas:'Unidad desconocida',duplicados:'Duplicados',descartadas:'Filas descartadas'}[S.filtroDatos]||'Todos los productos')}</span>
       ${S.filtroDatos!=='productos'?'<button class="b-sec" type="button" onclick="activarFiltroDatos(\'productos\')">Quitar filtro</button>':''}
         </div></div>
     ${r.advertencias.length?`<div class="aviso"><b>Revisa esto:</b><br>`+
@@ -598,42 +194,42 @@ function pintarCatalogo(d){
       <h3>Columnas detectadas</h3>
       <div class="fila">${Object.entries(r.columnas_detectadas).map(([o,c])=>
         `<span class="chip mono">${esc(o)} → ${esc(c)}</span>`).join('')||
-        '<span style="color:var(--tenue)">Ninguna</span>'}</div>
+        '<span style="color:var(--texto-secundario)">Ninguna</span>'}</div>
     </div>
     ${r.columnas_confusas?.length?`<div class="card"><h3>Columnas confusas y limpieza aplicada</h3>
       <div style="max-height:210px;overflow-y:auto;font-size:13px">
-      ${r.columnas_confusas.map(c=>`<div style="padding:8px 0;border-bottom:1px solid var(--linea)">
+      ${r.columnas_confusas.map(c=>`<div style="padding:8px 0;border-bottom:1px solid var(--gris-borde)">
         <b>${esc(c.original)}</b>${c.hoja?` <span class="et et-info">${esc(c.hoja)}</span>`:''}
-        <div style="color:var(--tenue)">${esc(c.motivo)}</div>
+        <div style="color:var(--texto-secundario)">${esc(c.motivo)}</div>
       </div>`).join('')}</div></div>`:''}
     ${r.articulos_completados?.length||r.articulos_no_encontrados?.length?`<div class="card">
       <h3>Trazabilidad de números de artículo</h3>
       ${r.articulos_completados?.length?`<div style="margin-bottom:14px"><b>Completados desde otra hoja (${r.articulos_completados.length})</b>
         <div style="max-height:180px;overflow-y:auto;font-size:13px;margin-top:8px">
-        ${r.articulos_completados.map(a=>`<div style="padding:8px 0;border-bottom:1px solid var(--linea)">
+        ${r.articulos_completados.map(a=>`<div style="padding:8px 0;border-bottom:1px solid var(--gris-borde)">
           <span class="mono">${esc(a.codigo)}</span> · <b>${esc(a.producto)}</b>
-          <div style="color:var(--tenue)">${esc(a.detalle)}</div>
+          <div style="color:var(--texto-secundario)">${esc(a.detalle)}</div>
         </div>`).join('')}</div></div>`:''}
       ${r.articulos_no_encontrados?.length?`<div><b>No encontrados en otra hoja (${r.articulos_no_encontrados.length})</b>
         <div style="max-height:180px;overflow-y:auto;font-size:13px;margin-top:8px">
-        ${r.articulos_no_encontrados.map(a=>`<div style="padding:8px 0;border-bottom:1px solid var(--linea)">
+        ${r.articulos_no_encontrados.map(a=>`<div style="padding:8px 0;border-bottom:1px solid var(--gris-borde)">
           <span class="mono">${esc(a.codigo)}</span>${a.hoja?` <span class="et et-warn">${esc(a.hoja)}</span>`:''}
-          <div style="color:var(--tenue)">${esc(a.causa)}</div>
+          <div style="color:var(--texto-secundario)">${esc(a.causa)}</div>
         </div>`).join('')}</div></div>`:''}
     </div>`:''}
     ${r.valores_negativos?.length?`<div class="card"><h3>Valores negativos eliminados</h3>
       <div style="max-height:220px;overflow-y:auto;font-size:13px">
-      ${r.valores_negativos.map(n=>`<div style="padding:8px 0;border-bottom:1px solid var(--linea)">
+      ${r.valores_negativos.map(n=>`<div style="padding:8px 0;border-bottom:1px solid var(--gris-borde)">
         <span class="mono">${esc(n.codigo||'Sin código')}</span> · <b>${esc(n.producto||'Sin producto')}</b>
-        <div style="color:var(--tenue)">${esc(n.bodega||'Sin bodega')} · valor original: ${esc(n.valor_original)} · ${esc(n.causa)}</div>
+        <div style="color:var(--texto-secundario)">${esc(n.bodega||'Sin bodega')} · valor original: ${esc(n.valor_original)} · ${esc(n.causa)}</div>
       </div>`).join('')}</div></div>`:''}
     ${renderDetalleFiltro()}
     ${d.correcciones.length?`<div class="card"><h3>Correcciones aplicadas
       (${d.correcciones.length})</h3>
       <div style="max-height:190px;overflow-y:auto;font-size:13px">
       ${d.correcciones.map(c=>`<div style="padding:6px 0;
-        border-bottom:1px solid var(--linea)"><b>${esc(c.producto)}</b><br>
-        <span style="color:var(--tenue)">${esc(c.detalle)}</span></div>`).join('')}
+        border-bottom:1px solid var(--gris-borde)"><b>${esc(c.producto)}</b><br>
+        <span style="color:var(--texto-secundario)">${esc(c.detalle)}</span></div>`).join('')}
       </div></div>`:''}
     <div class="card">
       <h3>Catálogo normalizado</h3>
@@ -666,7 +262,7 @@ function renderDetalleBodega(f){
     <b>Registros originales agrupados en «${esc(f.bodega)}» (${items.length})</b>
     <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">
       ${items.map(x=>`<div class="mono" style="font-size:13px;padding:7px 10px;
-        background:var(--panel);border:1px solid var(--linea);border-radius:var(--r)">
+        background:var(--gris-claro);border:1px solid var(--gris-borde);border-radius:var(--radio-md)">
         <span class="et ${x.tipo==='original'?'et-info':'et-warn'}"
           style="margin-right:9px">${x.tipo==='original'?'primer registro':'variante'}</span>
         ${esc(x.txt)}</div>`).join('')}
@@ -690,16 +286,16 @@ function renderDetalleFiltroBodegas(r){
   const f=S.filtroBodegas;
   if(f==='correcciones')return`<div class="card"><h3>Nombres corregidos (${(r.correcciones||[]).length})</h3>
     <div style="max-height:220px;overflow-y:auto;font-size:13px">
-    ${(r.correcciones||[]).map(c=>`<div style="padding:7px 0;border-bottom:1px solid var(--linea)" class="mono">
-      ${esc(c.original)} <span style="color:var(--tenue)">→</span> ${esc(c.normalizado)}
-      </div>`).join('')||'<div style="color:var(--tenue)">Sin correcciones.</div>'}</div></div>`;
+    ${(r.correcciones||[]).map(c=>`<div style="padding:7px 0;border-bottom:1px solid var(--gris-borde)" class="mono">
+      ${esc(c.original)} <span style="color:var(--texto-secundario)">→</span> ${esc(c.normalizado)}
+      </div>`).join('')||'<div style="color:var(--texto-secundario)">Sin correcciones.</div>'}</div></div>`;
   if(f==='revisar')return`<div class="card"><h3>Posibles duplicados · revisión manual (${(r.posibles_duplicados||[]).length})</h3>
     <div style="max-height:220px;overflow-y:auto">
     ${(r.posibles_duplicados||[]).map(x=>`<div style="padding:7px 0;
-      border-bottom:1px solid var(--linea);font-size:13px" class="mono">
-      ${esc(x.a)} <span style="color:var(--tenue)">≈</span> ${esc(x.b)}
+      border-bottom:1px solid var(--gris-borde);font-size:13px" class="mono">
+      ${esc(x.a)} <span style="color:var(--texto-secundario)">≈</span> ${esc(x.b)}
       <span class="et et-warn" style="margin-left:8px">${x.similitud}</span>
-      </div>`).join('')||'<div style="color:var(--tenue)">Sin coincidencias por revisar.</div>'}</div></div>`;
+      </div>`).join('')||'<div style="color:var(--texto-secundario)">Sin coincidencias por revisar.</div>'}</div></div>`;
   return'';
 }
 
@@ -727,7 +323,7 @@ function pintarBodegas(d,silencioso){
             r.posibles_duplicados.length?'alerta':'','revisar')}
     </div>
     <div class="card"><h3>Filtro activo</h3><div class="fila">
-      <span class="chip mono" style="border-color:var(--ambar);color:var(--ambar)">${esc(etiquetas[S.filtroBodegas]||'Todas las bodegas')}</span>
+      <span class="chip mono" style="border-color:var(--amarillo);color:#c98300">${esc(etiquetas[S.filtroBodegas]||'Todas las bodegas')}</span>
       ${S.filtroBodegas!=='todas'?'<button class="b-sec" type="button" onclick="activarFiltroBodegas(\'todas\')">Quitar filtro</button>':''}
     </div></div>
     ${renderDetalleFiltroBodegas(r)}
@@ -740,14 +336,14 @@ function pintarBodegas(d,silencioso){
         const nVariantes=String(f.variantes||'').split(' | ').filter(Boolean).length;
         return `<tr class="fila-clic ${f.id===S.bodegaSelId?'activa-fila':''}"
           onclick="seleccionarBodega(${f.id})">
-        <td class="mono" style="color:var(--tenue)">${f.id}</td>
+        <td class="mono" style="color:var(--texto-secundario)">${f.id}</td>
         <td>${esc(f.bodega)}</td>
-        <td style="color:var(--tenue);font-size:12px">${esc(f.bodega_original)}</td>
-        <td style="color:var(--tenue);font-size:12px">${nVariantes
+        <td style="color:var(--texto-secundario);font-size:12px">${esc(f.bodega_original)}</td>
+        <td style="color:var(--texto-secundario);font-size:12px">${nVariantes
           ?`<span class="et et-warn">${nVariantes} variante${nVariantes>1?'s':''}</span>`
           :'<span class="et et-gris">sin variantes</span>'}</td>
         </tr>`;
-      }).join('')||'<tr><td colspan="4" style="color:var(--tenue);text-align:center;padding:20px">Nada para este filtro.</td></tr>'}</tbody></table></div>
+      }).join('')||'<tr><td colspan="4" style="color:var(--texto-secundario);text-align:center;padding:20px">Nada para este filtro.</td></tr>'}</tbody></table></div>
       ${filaSel?renderDetalleBodega(filaSel):''}
       <div class="fila" style="margin-top:14px">
         <button class="b-sec" onclick="location.href='/api/exportar/bodegas'">
@@ -783,6 +379,9 @@ $('#btnSesion').onclick=async()=>{
   $('#chipSes').textContent='Sesión '+d.sesion;
   $('#chipSes').className='chip on';
   $('#quien').textContent=contadores[0];
+  $('#avatar').textContent=iniciales(auditor);
+  $('#perfilNombre').textContent=auditor;
+  $('#perfilSub').textContent='Auditor · '+d.resumen.bodega;
   $('#resSesion').innerHTML=`<div class="aviso bien">
     <b>Sesión ${esc(d.sesion)} abierta.</b><br>
     ${esc(d.resumen.modalidad)} · Bodega:
@@ -847,7 +446,7 @@ $('#btnRegistrar').onclick=async()=>{
           'style="margin-top:9px">'+d.alternativas.slice(0,4).map(a=>
           `<button class="b-sec" style="padding:7px 12px;min-height:auto;
             font-size:13px" onclick="usar('${esc(a.producto).replace(/'/g,"\\'")}')">
-            ${esc(a.producto)} <span style="color:var(--tenue)">
+            ${esc(a.producto)} <span style="color:var(--texto-secundario)">
             ${a.stock_disponible} ${esc(a.unidad)}</span></button>`).join('')+
           '</div>':''}</div>`;
     }else{
@@ -867,7 +466,7 @@ $('#btnRegistrar').onclick=async()=>{
     Sistema ${r.stock_disponible} ${esc(r.unidad_catalogo)} ·
     contado ${r.cantidad_normalizada} ·
     diferencia ${r.diferencia} (${r.error_pct} %)
-    <div style="margin-top:7px;font-size:12px;color:var(--tenue)">
+    <div style="margin-top:7px;font-size:12px;color:var(--texto-secundario)">
     ${r.mensajes.map(esc).join('<br>')}</div></div>`;
 
   $('#dictado').value='';previa();
@@ -898,7 +497,7 @@ function pintarBloqueo(r,texto){
         <button class="b-sec" onclick="$('#resConteo').innerHTML='';S.bloqueo=null">
           Cancelar</button>
       </div>
-      <div style="margin-top:11px;font-size:12px;color:var(--tenue)">
+      <div style="margin-top:11px;font-size:12px;color:var(--texto-secundario)">
         ${r.mensajes.map(esc).join('<br>')}</div>
     </div>`;
   setTimeout(()=>$('#cant')?.focus(),60);
@@ -953,7 +552,7 @@ async function refrescar(){
 
 function pintarRegistros(regs){
   if(!regs.length){$('#tablaRegistros').innerHTML=
-    '<div style="color:var(--tenue);font-size:13px">Aún no hay conteos.</div>';return;}
+    '<div style="color:var(--texto-secundario);font-size:13px">Aún no hay conteos.</div>';return;}
   const etq={APROBADO:'et-ok',PENDIENTE_AUDITORIA:'et-warn',
     PENDIENTE_CONTEO:'et-info',RECONTEO:'et-mal',RECHAZADO:'et-mal'};
   $('#tablaRegistros').innerHTML=`<div class="tabla-wrap">
@@ -966,18 +565,18 @@ function pintarRegistros(regs){
       <td class="num">${r.stock_disponible}</td>
       <td class="mono" style="font-size:11px">${Object.entries(r.conteos)
         .map(([c,v])=>`${esc(c.split(' ')[0])}: ${v.cantidad}`).join('<br>')
-        ||'<span style="color:var(--tenue)">por contar</span>'}
-        ${r.conteos_previos?`<div style="color:var(--tenue);margin-top:4px;
+        ||'<span style="color:var(--texto-secundario)">por contar</span>'}
+        ${r.conteos_previos?`<div style="color:var(--texto-secundario);margin-top:4px;
           text-decoration:line-through">${Object.entries(r.conteos_previos)
           .map(([c,v])=>`${esc(c.split(' ')[0])}: ${v.cantidad}`).join('<br>')}
           </div>`:''}</td>
       <td class="num">${r.consenso??'—'}</td>
       <td class="num" style="color:${r.diferencia<0?'var(--rojo)':
-        r.diferencia>0?'var(--ambar)':'var(--tenue)'}">${r.diferencia??'—'}</td>
+        r.diferencia>0?'#c98300':'var(--texto-secundario)'}">${r.diferencia??'—'}</td>
       <td class="num">${r.error_pct!=null?r.error_pct+' %':'—'}</td>
       <td><span class="et ${etq[r.estado]||'et-gris'}">
         ${esc(r.estado.replace(/_/g,' '))}</span>
-        ${r.motivo?`<div style="font-size:10px;color:var(--tenue);margin-top:4px;
+        ${r.motivo?`<div style="font-size:10px;color:var(--texto-secundario);margin-top:4px;
           max-width:190px">${esc(r.motivo)}</div>`:''}</td>
       </tr>`).join('')}</tbody></table></div>`;
 }
@@ -987,7 +586,7 @@ function pintarLog(bit){
     `<div><span class="t">${esc(b.ts.slice(11,19))}</span>
      <span class="a">${esc(b.actor)}</span>
      <span>${esc(b.accion)} · ${esc(Object.values(b.detalle).join(' · '))}</span>
-     </div>`).join(''):'<div style="color:var(--tenue)">Sin movimientos.</div>';
+     </div>`).join(''):'<div style="color:var(--texto-secundario)">Sin movimientos.</div>';
 }
 
 /* ══════════ 4 · AUDITORÍA ══════════ */
@@ -1019,13 +618,13 @@ async function pintarAuditoria(){
 
   $('#listaAud').innerHTML=
     (pend.length?`<h3 style="font-size:12px;text-transform:uppercase;
-      letter-spacing:.12em;color:var(--tenue);margin:20px 0 11px">
+      letter-spacing:.12em;color:var(--texto-tenue);margin:20px 0 11px">
       Pendientes de dictamen (${pend.length})</h3>`:'')+
     pend.map((r,i)=>`
     <div class="aud ${sev(r.severidad)}">
       <div class="cab">
         <div><div class="nom">${esc(r.producto)}</div>
-          <div style="font-size:12px;color:var(--tenue)">${esc(r.bodega||'')}</div>
+          <div style="font-size:12px;color:var(--texto-secundario)">${esc(r.bodega||'')}</div>
         </div>
         <span class="et ${etSev(r.severidad)}">${esc(r.severidad||'sin desviación')}</span>
       </div>
@@ -1035,7 +634,7 @@ async function pintarAuditoria(){
           `<div><b>${esc(c)}</b>${v.cantidad}</div>`).join('')}
         <div><b>Consenso</b>${r.consenso}</div>
         <div><b>Diferencia</b><span style="color:${r.diferencia<0?
-          'var(--rojo)':'var(--ambar)'}">${r.diferencia}</span></div>
+          'var(--rojo)':'#c98300'}">${r.diferencia}</span></div>
         <div><b>Error</b>${r.error_pct} %</div>
         ${r.dispersion_pct!=null?
           `<div><b>Dispersión</b>${r.dispersion_pct} %</div>`:''}
@@ -1057,13 +656,13 @@ async function pintarAuditoria(){
       </div>
     </div>`).join('')+
     (otros.length?`<h3 style="font-size:12px;text-transform:uppercase;
-      letter-spacing:.12em;color:var(--tenue);margin:26px 0 11px">
+      letter-spacing:.12em;color:var(--texto-tenue);margin:26px 0 11px">
       Otros registros (${otros.length})</h3>`+otros.map(r=>`
       <div class="aud"><div class="cab">
         <div><div class="nom" style="font-size:15px">${esc(r.producto)}</div>
-          ${r.motivo?`<div style="font-size:12px;color:var(--ambar);margin-top:4px">
+          ${r.motivo?`<div style="font-size:12px;color:#c98300;margin-top:4px">
             ${esc(r.motivo)}</div>`:''}
-          ${r.dictamen?`<div style="font-size:12px;color:var(--tenue);margin-top:4px">
+          ${r.dictamen?`<div style="font-size:12px;color:var(--texto-secundario);margin-top:4px">
             ${esc(r.dictamen.auditor)} · ${esc(r.dictamen.comentario||'sin comentario')}
             </div>`:''}
         </div>
@@ -1115,6 +714,14 @@ $('#btnDescargar').onclick=()=>{
 };
 
 window.ir=ir;
-</script>
-</body>
-</html>
+
+/* ── Catálogo de referencia precargado por el servidor ── */
+(async function cargarCatalogoPrecargado(){
+  try{
+    const d=await api('/api/catalogo');
+    if(!d.ok)return;
+    d._sinToast=true;
+    pintarCatalogo(d);
+    toast(`Catálogo de referencia cargado: ${d.reporte.filas_final} productos`,'bien');
+  }catch(e){/* sin catálogo precargado: se sigue pidiendo carga manual */}
+})();

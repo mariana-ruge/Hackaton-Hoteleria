@@ -1,0 +1,48 @@
+/* ============================================================
+   INVENTARIO 360 · COLSUBSIDIO
+   Design tokens — fuente única de verdad para color, radio y
+   sombra. El resto de las hojas de estilo solo consume estas
+   variables, nunca valores sueltos.
+   ============================================================ */
+
+:root {
+  /* ── Marca ─────────────────────────────────────────────── */
+  --azul-profundo: #003B73;
+  --azul-medio:    #0167B1;
+  --azul-claro:    #1E5A9E;
+  --amarillo:       #F8C802;
+  --amarillo-hover: #FFD633;
+
+  /* ── Superficies ───────────────────────────────────────── */
+  --blanco:     #FFFFFF;
+  --gris-claro: #F5F7FA;
+  --gris-borde: #E6ECF5;
+
+  /* ── Texto ─────────────────────────────────────────────── */
+  --texto-principal:   #0A2C53;
+  --texto-secundario:  #5F7793;
+  --texto-blanco:      #FFFFFF;
+  --texto-tenue:       rgba(255, 255, 255, 0.7);
+
+  /* ── Acentos de estado ─────────────────────────────────── */
+  --verde: #2FD699;
+  --rojo:  #FF6A6F;
+  --info:  #6CB4FF;
+
+  /* ── Radios ────────────────────────────────────────────── */
+  --radio-sm:   8px;
+  --radio-md:   12px;
+  --radio-lg:   16px;
+  --radio-xl:   20px;
+  --radio-full: 9999px;
+
+  /* ── Sombras ───────────────────────────────────────────── */
+  --sombra-suave:  0 2px 8px rgba(10, 44, 83, 0.08);
+  --sombra-media:  0 4px 16px rgba(10, 44, 83, 0.12);
+  --sombra-fuerte: 0 8px 24px rgba(10, 44, 83, 0.16);
+
+  /* ── Tipografía ────────────────────────────────────────── */
+  --fuente: 'Inter', 'Archivo', -apple-system, BlinkMacSystemFont,
+            'Segoe UI', Roboto, sans-serif;
+  --fuente-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+}

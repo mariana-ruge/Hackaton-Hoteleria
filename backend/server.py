@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Servidor web del sistema de inventario.
+Inventario 360 · Colsubsidio — servidor web (backend Flask).
     python server.py          ->  http://localhost:5000
 """
 import io
@@ -23,12 +23,20 @@ from auditoria import (SesionInventario, APROBADO, RECONTEO,
                             PENDIENTE_AUDITORIA, PENDIENTE_CONTEO)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend")
+REFERENCIA_XLSX = os.path.join(BASE_DIR, "..", "data", "Excel apoyo",
+                                "BODEGAS Y STOCK.xlsx")
 
-app = Flask(__name__, template_folder=BASE_DIR)
+app = Flask(
+    __name__,
+    template_folder=FRONTEND_DIR,
+    static_folder=os.path.join(FRONTEND_DIR, "static"),
+    static_url_path="/static",
+)
 app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024   # 32 MB
 
 # Estado en memoria (para producción: Redis o base de datos)
-ESTADO = {"catalogo": None, "reporte": None, "bodegas": None, "sesiones": {}}
+ESTADO = {"catalogo": None, "reporte": None, "correcciones": [], "bodegas": None, "sesiones": {}}
 SUBIDAS = tempfile.mkdtemp(prefix="inv_")
 
 
@@ -65,6 +73,57 @@ def _catalogo_bodega(bodega):
     return ESTADO["catalogo"][
         ESTADO["catalogo"]["bodega"].astype(str).str.lower() == str(bodega).lower()
     ].copy()
+
+
+def _payload_catalogo(df, rep, correcciones):
+    return {
+        "ok": True, "modo": "catalogo",
+        "reporte": {
+            "filas_origen": rep["filas_origen"],
+            "filas_final": rep["filas_final"],
+            "descartadas": rep["descartadas"],
+            "duplicados": rep["duplicados"],
+            "negativos_corregidos": rep["negativos_corregidos"],
+            "unidades_corregidas": rep["unidades_corregidas"],
+            "unidades_desconocidas": rep["unidades_desconocidas"],
+            "columnas_detectadas": rep["columnas_detectadas"],
+            "columnas_confusas": rep.get("columnas_confusas", []),
+            "advertencias": rep["advertencias"],
+            "valores_negativos": rep.get("valores_negativos", []),
+            "articulos_completados": rep.get("articulos_completados", []),
+            "articulos_no_encontrados": rep.get("articulos_no_encontrados", []),
+            "filas_descartadas": rep.get("filas_descartadas", []),
+            "duplicados_detalle": rep.get("duplicados_detalle", []),
+            "coherencia_modelo": rep.get("coherencia_modelo", {}),
+        },
+        "correcciones": correcciones,
+        "filas": df.fillna("").to_dict("records"),
+        "bodegas": sorted({b for b in df["bodega"].astype(str) if b.strip()}),
+    }
+
+
+def _cargar_referencia():
+    """Precarga el catálogo de referencia (data/Excel apoyo) al iniciar el
+    servidor, así la app arranca con datos reales sin exigir una carga manual."""
+    if not os.path.isfile(REFERENCIA_XLSX):
+        return
+    try:
+        df, rep = limpiar_libro(REFERENCIA_XLSX)
+        if len(df):
+            correcciones = [
+                {"producto": r["producto"], "detalle": r["observaciones"]}
+                for _, r in df[df["observaciones"] != ""].iterrows()
+            ]
+            ESTADO["catalogo"] = df
+            ESTADO["reporte"] = rep
+            ESTADO["correcciones"] = correcciones
+            print(f"  Catálogo de referencia precargado: {rep['filas_final']} productos "
+                  f"({len(rep.get('hojas_catalogo', []))} bodegas)")
+        df_bodegas, rep_bodegas = limpiar_bodegas(REFERENCIA_XLSX, hoja=0)
+        if len(df_bodegas):
+            ESTADO["bodegas"] = df_bodegas
+    except Exception as e:
+        print(f"  Aviso: no se pudo precargar el catálogo de referencia: {e}")
 
 
 def _contexto_bodega(bodega):
@@ -135,40 +194,18 @@ def api_cargar():
             {"producto": r["producto"], "detalle": r["observaciones"]}
             for _, r in df[df["observaciones"] != ""].iterrows()
         ]
-        return jsonify({
-            "ok": True, "modo": "catalogo",
-            "reporte": {
-                "filas_origen": rep["filas_origen"],
-                "filas_final": rep["filas_final"],
-                "descartadas": rep["descartadas"],
-                "duplicados": rep["duplicados"],
-                "negativos_corregidos": rep["negativos_corregidos"],
-                "unidades_corregidas": rep["unidades_corregidas"],
-                "unidades_desconocidas": rep["unidades_desconocidas"],
-                "columnas_detectadas": rep["columnas_detectadas"],
-                "columnas_confusas": rep.get("columnas_confusas", []),
-                "advertencias": rep["advertencias"],
-                "valores_negativos": rep.get("valores_negativos", []),
-                "articulos_completados": rep.get("articulos_completados", []),
-                "articulos_no_encontrados": rep.get("articulos_no_encontrados", []),
-                "filas_descartadas": rep.get("filas_descartadas", []),
-                "duplicados_detalle": rep.get("duplicados_detalle", []),
-                "coherencia_modelo": rep.get("coherencia_modelo", {}),
-            },
-            "correcciones": correcciones,
-            "filas": df.fillna("").to_dict("records"),
-            "bodegas": sorted({b for b in df["bodega"].astype(str) if b.strip()}),
-        })
+        ESTADO["correcciones"] = correcciones
+        return jsonify(_payload_catalogo(df, rep, correcciones))
     except Exception as e:
         return _err(f"No se pudo procesar el archivo: {e}", 500)
 
 
 @app.route("/api/catalogo")
 def api_catalogo():
-    df = ESTADO["catalogo"]
-    if df is None:
+    df, rep = ESTADO["catalogo"], ESTADO["reporte"]
+    if df is None or rep is None:
         return _err("Aún no has cargado un catálogo.", 404)
-    return jsonify({"ok": True, "filas": df.fillna("").to_dict("records")})
+    return jsonify(_payload_catalogo(df, rep, ESTADO.get("correcciones") or []))
 
 
 @app.route("/api/exportar/<tipo>")
@@ -413,6 +450,8 @@ def muy_grande(e):
     return _err("El archivo supera el límite de 32 MB.", 413)
 
 
+_cargar_referencia()
+
 if __name__ == "__main__":
-    print("\n  Sistema de Inventario  →  http://localhost:5000\n")
+    print("\n  Inventario 360 · Colsubsidio  →  http://localhost:5000\n")
     app.run(host="0.0.0.0", port=5000, debug=False)
