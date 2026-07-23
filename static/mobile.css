@@ -1,0 +1,933 @@
+/* ============================================================
+   Reskin — identidad Colsubsidio (mockups)
+   Azul profundo + amarillo + tarjetas blancas
+   ============================================================ */
+
+:root {
+  /* Paleta principal tomada de los mockups */
+  --tinta:       #0a2c53;   /* fondo navy profundo */
+  --panel:       #0f3b6e;   /* header / superficies oscuras */
+  --panel-2:     #184e88;   /* acento medio */
+  --panel-3:     #1e5a9e;   /* cards dashboard */
+  --linea:       rgba(255,255,255,.14);
+  --texto:       #f2f6fc;
+  --tenue:       #9db4cf;
+  --ambar:       #ffc629;   /* amarillo marca */
+  --ambar-claro: #ffd257;
+  --verde:       #2fd699;
+  --rojo:        #ff6a6f;
+  --azul:        #6cb4ff;
+  --r:           16px;
+
+  /* Tokens para superficies blancas */
+  --marino:       #0a2c53;
+  --marino-tenue: #5f7793;
+  --divisor-claro:#e6ecf5;
+  --superficie:   #ffffff;
+  --superficie-alt:#eef3fa;
+}
+
+/* ── Reset base ── */
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--tinta);-webkit-font-smoothing:antialiased}
+
+body{
+  margin:0;
+  font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  color:var(--texto);
+  background:
+    radial-gradient(900px 480px at 100% -10%, rgba(255,255,255,.06), transparent 60%),
+    radial-gradient(700px 420px at -10% 15%, rgba(255,255,255,.05), transparent 55%),
+    linear-gradient(180deg, var(--tinta), #082347 60%, #071d3d);
+  background-attachment:fixed;
+  min-height:100vh;
+}
+
+/* ============================================================
+   HEADER tipo app — igual al mockup 1 y 3
+   ============================================================ */
+header{
+  background:linear-gradient(135deg, #0f3b6e 0%, #0a2c53 100%);
+  border-bottom:0;
+  border-radius:0 0 20px 20px;
+  box-shadow:0 6px 22px rgba(0,0,0,.28);
+  padding:16px 20px 14px;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.hwrap{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0;
+}
+
+/* Marca / logo Colsubsidio */
+.marca{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+.marca b{
+  position:relative;
+  padding-left:18px;
+  letter-spacing:-.01em;
+  font-size:17px;
+  font-weight:700;
+  color:#fff;
+}
+/* Chevron amarillo del logo */
+.marca b::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:3px;
+  width:0;
+  height:0;
+  border-top:7px solid transparent;
+  border-bottom:7px solid transparent;
+  border-right:10px solid var(--ambar);
+}
+.marca span{
+  color:var(--tenue);
+  font-size:12px;
+  font-weight:400;
+}
+
+/* Info de usuario en header */
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.user-avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid rgba(255,255,255,.2);
+}
+.user-name{
+  font-size:15px;
+  font-weight:600;
+  color:#fff;
+  line-height:1.2;
+}
+.user-greeting{
+  font-size:11px;
+  color:var(--tenue);
+  font-weight:400;
+}
+
+/* Chip "Cuenta" con ícono de ubicación */
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:999px;
+  padding:6px 14px 6px 10px;
+  font-size:13px;
+  font-weight:600;
+  color:#fff;
+  cursor:pointer;
+  transition:background .15s;
+}
+.chip:hover{background:rgba(255,255,255,.16)}
+.chip .chip-icon{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:var(--ambar);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  color:var(--marino);
+}
+.chip .chip-arrow{
+  margin-left:4px;
+  font-size:10px;
+  opacity:.7;
+}
+.chip.on{
+  background:rgba(47,214,153,.16);
+  border-color:var(--verde);
+  color:var(--verde);
+}
+/* Chips que viven dentro de una tarjeta blanca (p. ej. "Columnas
+   detectadas") no pueden heredar el texto blanco del header:
+   quedaban invisibles sobre fondo claro. */
+.card .chip{
+  background:var(--superficie-alt);
+  border-color:var(--divisor-claro);
+  color:var(--marino);
+}
+
+/* ============================================================
+   CONTENIDO PRINCIPAL
+   Sin @media = estado por defecto = escritorio/PC. El ancho se
+   va acotando hacia abajo (tablet, celular) y ampliando hacia
+   arriba (monitores anchos) en las reglas @media de más abajo.
+   ============================================================ */
+main{
+  padding:26px 20px 80px;
+  max-width:1240px;
+  margin:0 auto;
+}
+
+/* Título de pantalla (ej: "Inventario finalizado") */
+.screen-title{
+  text-align:center;
+  margin:24px 0 6px;
+}
+.screen-title h2{
+  font-size:22px;
+  font-weight:700;
+  color:#fff;
+  margin:0 0 4px;
+  letter-spacing:-.02em;
+}
+.screen-title p{
+  font-size:14px;
+  color:var(--tenue);
+  margin:0;
+}
+
+/* Avatar grande amarillo (mockup 1) */
+.avatar-large{
+  width:96px;
+  height:96px;
+  border-radius:50%;
+  background:var(--ambar);
+  margin:20px auto 16px;
+  display:block;
+}
+
+/* Logo Colsubsidio centrado */
+.logo-center{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin:16px 0 8px;
+}
+.logo-center .logo-chevron{
+  width:0;height:0;
+  border-top:10px solid transparent;
+  border-bottom:10px solid transparent;
+  border-right:14px solid var(--ambar);
+}
+.logo-center span{
+  font-size:18px;
+  font-weight:700;
+  color:#fff;
+  letter-spacing:-.01em;
+}
+
+/* ============================================================
+   TARJETAS BLANCAS — como en mockup 1 (resultado inventario)
+   ============================================================ */
+.card,
+.consola,
+.aud,
+.bloqueo{
+  background:var(--superficie);
+  color:var(--marino);
+  border:1px solid var(--divisor-claro);
+  border-radius:20px;
+  box-shadow:0 14px 30px rgba(5,20,42,.22);
+  padding:24px;
+  margin-bottom:16px;
+  /* Re-tinta tokens internos para legibilidad */
+  --tenue:var(--marino-tenue);
+  --linea:var(--divisor-claro);
+  --panel-2:var(--superficie-alt);
+}
+
+.card h3{
+  color:var(--marino-tenue);
+  font-size:12px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  margin:0 0 12px;
+}
+.card .sub{
+  color:var(--marino-tenue);
+  font-size:13px;
+}
+
+/* Filas de estadísticas con divisor (mockup 1) */
+.stat-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 0;
+  border-bottom:1px solid var(--divisor-claro);
+  font-size:15px;
+}
+.stat-row:last-child{border-bottom:none}
+.stat-row .stat-label{
+  color:var(--marino);
+  font-weight:500;
+}
+.stat-row .stat-value{
+  color:var(--marino);
+  font-weight:700;
+  font-size:18px;
+}
+.stat-row .stat-value.highlight{
+  color:var(--panel-2);
+}
+
+/* ============================================================
+   TARJETAS DASHBOARD (mockup 3)
+   ============================================================ */
+/* Card grande de resumen */
+.card-resumen{
+  background:var(--panel-3);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:20px;
+  padding:20px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,.18);
+}
+.card-resumen .resumen-label{
+  font-size:14px;
+  color:rgba(255,255,255,.85);
+  font-weight:500;
+}
+.card-resumen .resumen-value{
+  font-size:42px;
+  font-weight:700;
+  color:#fff;
+  line-height:1;
+}
+.card-resumen .resumen-chart{
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  border:4px solid rgba(255,255,255,.2);
+  border-top-color:var(--ambar);
+  border-right-color:var(--ambar);
+}
+
+/* Grid de 3 cards pequeñas */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:24px;
+}
+.stat-card{
+  background:var(--panel-3);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:16px;
+  padding:16px 14px;
+  text-align:center;
+  box-shadow:0 6px 16px rgba(0,0,0,.15);
+}
+.stat-card .stat-card-label{
+  font-size:11px;
+  color:rgba(255,255,255,.7);
+  font-weight:500;
+  margin-bottom:6px;
+}
+.stat-card .stat-card-value{
+  font-size:32px;
+  font-weight:700;
+  color:#fff;
+  line-height:1;
+}
+
+/* Sección "Próximo inventario" */
+.section-label{
+  font-size:14px;
+  font-weight:600;
+  color:rgba(255,255,255,.7);
+  margin:0 0 12px;
+}
+
+.card-proximo{
+  background:var(--panel-3);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:20px;
+  padding:20px 22px;
+  margin-bottom:24px;
+  box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
+.card-proximo .proximo-name{
+  font-size:16px;
+  font-weight:700;
+  color:#fff;
+  margin:0 0 2px;
+}
+.card-proximo .proximo-location{
+  font-size:13px;
+  color:rgba(255,255,255,.6);
+  margin:0 0 12px;
+}
+.card-proximo .proximo-details{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.card-proximo .proximo-info{
+  font-size:13px;
+  color:rgba(255,255,255,.8);
+  line-height:1.5;
+}
+.card-proximo .proximo-info strong{
+  display:block;
+  font-size:15px;
+  color:#fff;
+}
+
+/* Card vacía (progreso del día) */
+.card-vacia{
+  background:var(--panel-3);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:20px;
+  padding:20px;
+  min-height:120px;
+  box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
+
+/* ============================================================
+   BOTONES — pill shape como en mockups
+   ============================================================ */
+button{
+  border-radius:999px;
+  letter-spacing:.01em;
+  border-width:1px;
+  font-family:inherit;
+  cursor:pointer;
+  transition:all .15s;
+}
+
+.b-pri{
+  background:linear-gradient(180deg, #ffd257, var(--ambar));
+  color:#0a2c53;
+  box-shadow:0 6px 16px rgba(255,198,41,.3);
+  border-color:rgba(0,0,0,.05);
+  font-weight:700;
+  font-size:15px;
+  padding:14px 28px;
+}
+.b-pri:hover{
+  box-shadow:0 8px 22px rgba(255,198,41,.45);
+  transform:translateY(-1px);
+}
+
+/* Sólido en vez de transparente: b-sec vive sobre todo dentro
+   de tarjetas blancas, y texto blanco sobre transparente ahí
+   quedaba invisible. */
+.b-sec{
+  /* ojo: --panel-2 se re-tinta a un tono claro dentro de .card
+     (para tablas/hover); usar --panel aquí, que no se re-tinta,
+     para que el botón no se vuelva blanco-sobre-blanco. */
+  background:var(--panel);
+  color:#fff;
+  border:1.5px solid rgba(255,255,255,.3);
+  font-weight:600;
+  font-size:15px;
+  padding:14px 28px;
+}
+.b-sec:hover{
+  filter:brightness(1.12);
+  border-color:rgba(255,255,255,.5);
+}
+
+.b-ok{
+  background:linear-gradient(180deg,#3ee6a8,var(--verde));
+  color:#052f22;
+  box-shadow:0 6px 16px rgba(47,214,153,.26);
+  font-weight:700;
+  font-size:14px;
+  padding:10px 22px;
+}
+
+.b-no{
+  background:linear-gradient(180deg,#ff7d81,var(--rojo));
+  box-shadow:0 6px 16px rgba(255,106,111,.26);
+  color:#fff;
+  font-weight:700;
+}
+
+/* Botones de acción en pantalla de resultado */
+.action-buttons{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-top:20px;
+}
+.action-buttons .b-pri{font-size:16px;padding:16px 28px}
+.action-buttons .b-sec{font-size:16px;padding:16px 28px}
+
+/* Texto "Es correcto?" */
+.confirm-text{
+  text-align:center;
+  font-size:14px;
+  color:var(--tenue);
+  margin:20px 0 12px;
+}
+
+/* ============================================================
+   FICHAS DE ESTADO (mets)
+   ============================================================ */
+.mets{
+  background:var(--divisor-claro);
+  border-color:var(--divisor-claro);
+  box-shadow:0 10px 24px rgba(5,20,42,.18);
+  border-radius:16px;
+  padding:4px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:4px;
+}
+.met{
+  background:var(--superficie);
+  border-radius:12px;
+  padding:14px 12px;
+  text-align:center;
+}
+.met .v{
+  color:var(--marino);
+  font-size:22px;
+  font-weight:700;
+  line-height:1;
+}
+.met .k{
+  color:var(--marino-tenue);
+  font-size:11px;
+  font-weight:500;
+  margin-top:4px;
+}
+.met.clickable{cursor:pointer}
+.met.clickable:hover{background:var(--superficie-alt)}
+.met.clickable.activa{
+  background:var(--superficie-alt);
+  outline:2px solid var(--ambar);
+}
+.met.alerta .v{color:#c98300}
+.met.mal .v{color:#d3454a}
+.met.bien .v{color:#1fa374}
+
+/* ============================================================
+   AVISOS
+   ============================================================ */
+.aviso{
+  background:rgba(255,198,41,.12);
+  border:1px solid rgba(255,198,41,.45);
+  border-radius:12px;
+  padding:12px 16px;
+  font-size:13px;
+  color:var(--ambar-claro);
+}
+.aviso.bien{
+  background:rgba(47,214,153,.12);
+  border-color:rgba(47,214,153,.45);
+  color:var(--verde);
+}
+.aviso.mal{
+  background:rgba(255,106,111,.12);
+  border-color:rgba(255,106,111,.45);
+  color:var(--rojo);
+}
+
+/* ============================================================
+   FORMULARIOS
+   ============================================================ */
+input,select,textarea{
+  font-size:16px;
+  padding:12px 14px;
+  border-radius:calc(var(--r) - 4px);
+  background:var(--tinta);
+  color:#f2f6fc;
+  border:1px solid rgba(255,255,255,.16);
+  font-family:inherit;
+  width:100%;
+}
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border-color:var(--ambar);
+  box-shadow:0 0 0 3px rgba(255,198,41,.2);
+}
+
+/* ============================================================
+   ZONA DE CARGA (drag & drop)
+   ============================================================ */
+.drop{
+  background:var(--superficie-alt);
+  border:2px dashed #c9d6e6;
+  border-radius:16px;
+  padding:32px 20px;
+  text-align:center;
+  transition:all .15s;
+}
+.drop:hover,.drop.activo{
+  background:rgba(255,198,41,.12);
+  border-color:var(--ambar);
+}
+.drop .ico,.vacio-msg .ico{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  margin:0 auto 12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,198,41,.16);
+  color:#c98300;
+  font-size:24px;
+}
+
+/* ============================================================
+   TABLAS
+   ============================================================ */
+.tabla-wrap{
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid var(--divisor-claro);
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+th{
+  background:var(--superficie-alt);
+  color:var(--marino-tenue);
+  font-weight:600;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  padding:12px 14px;
+  text-align:left;
+}
+td{
+  padding:12px 14px;
+  border-top:1px solid var(--divisor-claro);
+  color:var(--marino);
+}
+tbody tr:hover{background:var(--superficie-alt)}
+
+/* ============================================================
+   CONSOLA / LOG
+   ============================================================ */
+.consola{
+  border-left:3px solid var(--ambar);
+  padding:20px;
+}
+.log{
+  --tenue:#9db4cf;
+  background:var(--tinta);
+  border-color:rgba(255,255,255,.14);
+  border-radius:12px;
+  padding:14px;
+  font-family:'SF Mono','Fira Code',monospace;
+  font-size:13px;
+  color:var(--tenue);
+}
+.log .a{color:var(--ambar)}
+
+/* ============================================================
+   AUDITORÍA
+   ============================================================ */
+.aud{
+  border-left:3px solid var(--divisor-claro);
+  padding:20px;
+}
+
+/* ============================================================
+   BLOQUEO
+   ============================================================ */
+.bloqueo{
+  padding:24px;
+  text-align:center;
+}
+
+/* ============================================================
+   VISTA PREVIA DICTADO
+   ============================================================ */
+.vp div{
+  background:var(--superficie-alt);
+  border-radius:10px;
+  padding:10px 14px;
+  margin-bottom:8px;
+}
+.vp .v{color:var(--marino);font-weight:600}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+#toast{
+  position:fixed;
+  bottom:100px;
+  left:50%;
+  transform:translateX(-50%) translateY(90px);
+  background:var(--superficie);
+  color:var(--marino);
+  border:1px solid var(--divisor-claro);
+  border-radius:14px;
+  padding:14px 22px;
+  font-size:14px;
+  font-weight:600;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  opacity:0;
+  /* aunque esté oculto, el toast sigue ocupando su caja fija
+     cerca del borde inferior y por encima de la barra de
+     navegación (z-index); sin esto tapaba los taps de los tabs */
+  pointer-events:none;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+  z-index:200;
+  max-width:90%;
+  text-align:center;
+}
+#toast.on{
+  transform:translateX(-50%) translateY(0);
+  opacity:1;
+}
+
+/* ============================================================
+   NAVEGACIÓN INFERIOR TIPO APP
+   ============================================================ */
+@media (max-width:900px){
+  main{
+    padding-bottom:calc(96px + env(safe-area-inset-bottom));
+  }
+
+  nav{
+    position:fixed;
+    top:auto;
+    bottom:0;
+    left:0;
+    right:0;
+    background:var(--superficie);
+    border-top:0;
+    box-shadow:0 -8px 24px rgba(5,20,42,.22);
+    padding-bottom:env(safe-area-inset-bottom);
+    z-index:150;
+  }
+  .nwrap{
+    padding:6px 6px 4px;
+    display:flex;
+    justify-content:space-around;
+    gap:2px;
+  }
+  .tab{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:7px;
+    padding:6px 2px;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.02em;
+    border-bottom:0;
+    color:#93a6bd;
+    text-transform:none;
+    min-height:auto;
+    background:none;
+    border:none;
+    border-radius:0;
+    cursor:pointer;
+    position:relative;
+  }
+  /* Íconos: SVG de Lucide (lucide.dev, licencia ISC) embebidos
+     como mask-image, así se colorean por CSS sin depender de
+     emojis (que varían de dibujo entre SO/navegador). */
+  .tab::before{
+    content:"";
+    display:block;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background-color:#93a6bd;
+    -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+    -webkit-mask-position:center;mask-position:center;
+    -webkit-mask-size:contain;mask-size:contain;
+    transition:background-color .15s,box-shadow .15s;
+  }
+  .tab[data-v="datos"]::before{
+    -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cellipse cx='12' cy='5' rx='9' ry='3'/%3E%3Cpath d='M3 5V19A9 3 0 0 0 21 19V5'/%3E%3Cpath d='M3 12A9 3 0 0 0 21 12'/%3E%3C/svg%3E");
+    mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cellipse cx='12' cy='5' rx='9' ry='3'/%3E%3Cpath d='M3 5V19A9 3 0 0 0 21 19V5'/%3E%3Cpath d='M3 12A9 3 0 0 0 21 12'/%3E%3C/svg%3E");
+  }
+  .tab[data-v="sesion"]::before{
+    -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 21V10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v11'/%3E%3Cpath d='M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1.132-1.803l7.95-3.974a2 2 0 0 1 1.837 0l7.948 3.974A2 2 0 0 1 22 8z'/%3E%3Cpath d='M6 13h12'/%3E%3Cpath d='M6 17h12'/%3E%3C/svg%3E");
+    mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 21V10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v11'/%3E%3Cpath d='M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1.132-1.803l7.95-3.974a2 2 0 0 1 1.837 0l7.948 3.974A2 2 0 0 1 22 8z'/%3E%3Cpath d='M6 13h12'/%3E%3Cpath d='M6 17h12'/%3E%3C/svg%3E");
+  }
+  .tab[data-v="conteo"]::before{
+    -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 19v3'/%3E%3Cpath d='M19 10v2a7 7 0 0 1-14 0v-2'/%3E%3Crect x='9' y='2' width='6' height='13' rx='3'/%3E%3C/svg%3E");
+    mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 19v3'/%3E%3Cpath d='M19 10v2a7 7 0 0 1-14 0v-2'/%3E%3Crect x='9' y='2' width='6' height='13' rx='3'/%3E%3C/svg%3E");
+  }
+  .tab[data-v="auditoria"]::before{
+    -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='m9 14 2 2 4-4'/%3E%3C/svg%3E");
+    mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='m9 14 2 2 4-4'/%3E%3C/svg%3E");
+  }
+
+  .tab[aria-selected=true]{
+    color:var(--marino);
+  }
+  .tab[aria-selected=true]::before{
+    background-color:#0a2c53;
+    box-shadow:0 0 0 6px var(--ambar),0 4px 12px rgba(255,198,41,.45);
+  }
+  .tab .n{
+    position:absolute;
+    top:0;
+    right:calc(50% - 26px);
+    margin:0;
+    font-size:9px;
+    padding:1px 5px;
+    background:var(--rojo);
+    color:#fff;
+    border-radius:999px;
+    font-weight:700;
+  }
+  .tab:disabled{opacity:.32}
+
+  header{
+    position:sticky;
+    top:0;
+    border-radius:0 0 16px 16px;
+  }
+
+  #toast{
+    bottom:calc(88px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ── Tablets ── */
+@media (min-width:641px) and (max-width:900px){
+  main{padding:22px 26px 96px}
+  .tab{font-size:11px}
+  .card{padding:22px}
+}
+
+/* ── Celulares ── */
+@media (max-width:640px){
+  .hwrap{padding:12px 14px;gap:10px}
+  .marca b{font-size:16px}
+  .chip{font-size:12px;padding:5px 10px}
+  .card{padding:16px;border-radius:16px}
+  .card h3{font-size:11px}
+  h2{font-size:17px}
+  .mets{grid-template-columns:repeat(2,1fr)}
+  .met{padding:12px 13px}
+  .met .v{font-size:20px}
+  .g3{grid-template-columns:1fr}
+  .tabla-wrap{border-radius:12px}
+  table{font-size:12px}
+  th,td{padding:8px 10px}
+  .fila{gap:8px}
+  .fila button{flex:1;min-width:130px}
+  #dictado{font-size:16px;padding:13px}
+  .consola{padding:16px}
+  .aud{padding:15px}
+  .cifras{gap:16px;font-size:12px}
+  #toast{
+    left:14px;right:14px;
+    transform:translateY(90px);
+    max-width:none;
+    text-align:center;
+    background:var(--superficie);
+    color:var(--marino);
+    border-color:var(--divisor-claro);
+  }
+  #toast.on{transform:translateY(0)}
+}
+
+@media (max-width:380px){
+  .tab{font-size:9px}
+  .tab::before{width:17px;height:17px}
+  .tab[aria-selected=true]::before{box-shadow:0 0 0 5px var(--ambar),0 4px 12px rgba(255,198,41,.45)}
+  .marca span{display:none}
+}
+
+/* ============================================================
+   Rango completo de pantallas: laptop compacta y monitores
+   anchos, para que el layout de escritorio también se adapte
+   ============================================================ */
+/* ── Laptop compacta / tablet en horizontal grande ── */
+@media (min-width:901px) and (max-width:1180px){
+  main{max-width:100%;padding:24px 24px 80px}
+  .mets{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+}
+
+/* ── Monitores anchos: más aire, sin dejar el contenido estirado ── */
+@media (min-width:1600px){
+  main{max-width:1440px;padding:32px 32px 90px}
+  h2{font-size:21px}
+}
+
+/* ============================================================
+   PANTALLA SPLASH (mockup 2)
+   ============================================================ */
+.splash{
+  position:fixed;
+  inset:0;
+  background:var(--tinta);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+  /* Patrón sutil de íconos de comida */
+  background-image:
+    radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size:40px 40px;
+}
+.splash-icon{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  background:var(--panel-2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36px;
+  margin-bottom:24px;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+.splash-logo{
+  position:absolute;
+  bottom:40px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.splash-logo .logo-chevron{
+  width:0;height:0;
+  border-top:10px solid transparent;
+  border-bottom:10px solid transparent;
+  border-right:14px solid var(--ambar);
+}
+.splash-logo span{
+  font-size:18px;
+  font-weight:700;
+  color:#fff;
+}
+
+/* ============================================================
+   ANIMACIONES
+   ============================================================ */
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.card,.stat-card,.card-resumen,.card-proximo{
+  animation:fadeIn .4s ease-out both;
+}
+.stat-card:nth-child(2){animation-delay:.05s}
+.stat-card:nth-child(3){animation-delay:.1s}
+.card-proximo{animation-delay:.15s}
