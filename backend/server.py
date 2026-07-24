@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from limpieza import limpiar, limpiar_libro, es_excel, COLUMNAS
 from bodegas import limpiar_bodegas
 from dictado import parsear, buscar_producto
+from qr import decodificar_data_url
 from validacion import validar, BLOQUEADO
 from unidades import UNIDADES, plural
 from auditoria import (SesionInventario, APROBADO, RECONTEO,
@@ -34,6 +35,10 @@ app = Flask(
     static_url_path="/static",
 )
 app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024   # 32 MB
+# Sin esto, Flask cachea index.html compilado desde el primer render y los
+# cambios en el HTML no se ven hasta reiniciar el servidor a mano.
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.jinja_env.auto_reload = True
 
 # Estado en memoria (para producción: Redis o base de datos)
 ESTADO = {"catalogo": None, "reporte": None, "correcciones": [], "bodegas": None, "sesiones": {}}
@@ -443,6 +448,17 @@ def api_unidades():
     return jsonify({"ok": True, "unidades": [
         {"codigo": k, "nombre": v["nombre"], "plural": plural(k),
          "familia": v["familia"]} for k, v in UNIDADES.items()]})
+
+
+# ─────────────────────────────────────────── QR (carnet)
+@app.route("/api/qr/decodificar", methods=["POST"])
+def api_qr_decodificar():
+    d = request.get_json(force=True)
+    texto = decodificar_data_url(d.get("imagen"))
+    if not texto:
+        return jsonify({"ok": False,
+                        "error": "No se detectó ningún código QR en la imagen."})
+    return jsonify({"ok": True, "texto": texto})
 
 
 @app.errorhandler(413)

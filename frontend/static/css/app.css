@@ -42,15 +42,16 @@ body {
 /* ============================================================
    ENCABEZADO
    ============================================================ */
+/* El header y el nav stickean juntos como una sola unidad, así el
+   nav nunca necesita adivinar la altura exacta del header. */
+.topbar { position: sticky; top: 0; z-index: 100; }
+
 header {
   background: rgba(1, 103, 177, 0.28);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
   padding: 14px 20px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
 }
 .hwrap {
   display: flex;
@@ -60,6 +61,17 @@ header {
   min-height: 44px;
 }
 .hspace { flex: 1; }
+
+/* Fila aparte para los chips de estado: si van en la misma fila
+   que el perfil y el botón de inicio, en móvil no cabe todo y se
+   amontona. Con su propia fila, cada chip tiene espacio real. */
+.hchips {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.hchips .chip { flex: 1 1 0; min-width: 0; }
+.hchips .chip span, .hchips .chip { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Perfil: avatar + nombre, siempre visible arriba a la izquierda.
    Tarjeta "liquid glass": color plano semitransparente + blur,
@@ -133,15 +145,306 @@ header {
   color: var(--texto-principal);
 }
 
+/* Botón para reabrir la pantalla de bienvenida desde cualquier vista */
+.btn-inicio {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  min-height: 0;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .16);
+  color: var(--texto-blanco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-inicio svg { width: 17px; height: 17px; }
+.btn-inicio:hover:not(:disabled) { background: rgba(255, 255, 255, .16); filter: none; }
+
+/* ============================================================
+   BIENVENIDA — pantalla de entrada, antes del shell de la app
+   ============================================================ */
+.splash, .bienvenida, .qr-pantalla {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  background: var(--azul-profundo);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .3s ease, visibility .3s ease;
+}
+.splash { z-index: 502; cursor: pointer; }
+.qr-pantalla { z-index: 501; }
+.splash.oculto, .bienvenida.oculto, .qr-pantalla.oculto { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.bienvenida-frame {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.bienvenida-top {
+  flex: 1 1 40%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: var(--azul-medio);
+  padding-bottom: 46px;
+}
+/* Foto de equipo de fondo, desenfocada y atenuada con un velo navy,
+   igual que en el mockup: no es una foto real, son los mismos
+   recortes de persona ampliados y difuminados. */
+.bienvenida-top .foto-fondo {
+  position: absolute;
+  inset: -10%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  filter: blur(4px);
+  transform: scale(1.2);
+}
+.bienvenida-top .foto-fondo img { height: 118%; object-fit: cover; margin: 0 -6px; }
+.bienvenida-top::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 44, 83, .35) 0%, rgba(10, 44, 83, .62) 55%, var(--azul-profundo) 100%);
+}
+.bienvenida-badge {
+  position: relative;
+  z-index: 1;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--azul-profundo);
+  border: 3px solid rgba(255, 255, 255, .16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(50%);
+}
+.bienvenida-badge.badge-splash { transform: none; }
+.bienvenida-badge img { width: 60px; height: 60px; object-fit: contain; }
+
+.bienvenida-bottom {
+  flex: 1 1 60%;
+  background: var(--azul-profundo);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 66px 28px 28px;
+}
+.bienvenida-bottom h1 {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--texto-blanco);
+  text-wrap: balance;
+}
+.bienvenida-bottom p {
+  color: var(--texto-tenue);
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 36ch;
+  margin-top: 8px;
+}
+.bienvenida-acciones {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 380px;
+  margin-top: 28px;
+}
+.bienvenida-acciones button {
+  flex: 1 1 150px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.bienvenida-acciones svg { width: 16px; height: 16px; flex: none; }
+
+.bienvenida-marca {
+  margin-top: auto;
+  padding-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bienvenida-marca img { height: 22px; width: auto; }
+
+/* Fotos del equipo: la del centro (crate) al frente y más grande,
+   las laterales un poco más chicas y detrás, ancladas abajo. */
+.bienvenida-personas {
+  margin-top: 22px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.bienvenida-personas img {
+  height: 132px;
+  width: 96px;
+  object-fit: cover;
+  object-position: bottom;
+}
+.bienvenida-personas .persona-lateral { height: 104px; opacity: .85; }
+.bienvenida-personas .persona-centro { height: 150px; width: 108px; margin: 0 -10px; z-index: 1; }
+
+/* ── Splash: primera pantalla, logo arriba, sin botones ── */
+.splash-frame {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 36px 28px 30px;
+}
+.splash-frame > * { position: relative; z-index: 1; }
+.splash-logo img { height: 20px; width: auto; }
+.splash-frame .bienvenida-badge { margin-top: 38px; }
+.splash-tit {
+  margin-top: 26px;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.4;
+  color: var(--texto-blanco);
+  letter-spacing: -.01em;
+}
+.splash-frame .bienvenida-personas { margin-top: auto; padding-top: 24px; }
+
+@media (min-width: 640px) {
+  .splash, .bienvenida, .qr-pantalla { align-items: center; justify-content: center; padding: 24px; }
+  .bienvenida-frame {
+    width: min(420px, 100%);
+    height: min(780px, 92vh);
+    border-radius: var(--radio-xl);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .12);
+  }
+}
+
+/* ── Pantalla de escaneo de QR (carnet) ── */
+.qr-frame {
+  position: relative;
+  overflow: hidden;
+  padding: 18px 24px 28px;
+  background:
+    radial-gradient(500px 320px at 90% -10%, rgba(255, 255, 255, .05), transparent 60%),
+    var(--azul-profundo);
+}
+/* Doodles decorativos de fondo, muy sutiles, detrás del contenido */
+.qr-frame::before, .splash-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/static/img/doodles__-07.svg") center/cover no-repeat;
+  opacity: .08;
+  pointer-events: none;
+}
+.qr-frame > * { position: relative; z-index: 1; }
+.qr-top { display: flex; align-items: center; justify-content: space-between; }
+.qr-volver, .qr-badge {
+  width: 40px;
+  height: 40px;
+  min-height: 0;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.qr-volver {
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .16);
+  color: var(--texto-blanco);
+}
+.qr-volver svg { width: 18px; height: 18px; }
+.qr-badge { background: var(--azul-medio); border: 2px solid rgba(255, 255, 255, .16); }
+.qr-badge img { width: 24px; height: 24px; object-fit: contain; }
+
+.qr-cuerpo { margin-top: 22px; }
+.qr-cuerpo h1 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--texto-blanco);
+}
+.qr-cuerpo > p {
+  color: var(--texto-tenue);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Visor de cámara real: <video> con getUserMedia + marco de encuadre */
+.qr-visor {
+  position: relative;
+  margin-top: 20px;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radio-lg);
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, .14);
+}
+.qr-visor video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.qr-marco {
+  position: absolute;
+  inset: 14%;
+  border: 3px solid rgba(255, 255, 255, .85);
+  border-radius: var(--radio-md);
+  box-shadow: 0 0 0 999px rgba(0, 0, 0, .28);
+  pointer-events: none;
+}
+.qr-estado {
+  margin-top: 12px;
+  min-height: 18px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--texto-tenue);
+}
+.qr-estado.mal { color: #ff9497; }
+.qr-estado.bien { color: var(--verde); }
+
+.qr-shutter {
+  align-self: center;
+  margin-top: auto;
+  width: 62px;
+  height: 62px;
+  min-height: 0;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--blanco);
+  border: 3px solid rgba(255, 255, 255, .5);
+  color: var(--azul-profundo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.qr-shutter svg { width: 24px; height: 24px; }
+.qr-shutter:hover:not(:disabled) { filter: none; background: var(--gris-claro); }
+
 /* ============================================================
    NAVEGACIÓN POR PESTAÑAS
    ============================================================ */
 nav {
   border-bottom: 1px solid var(--borde);
   background: var(--azul-medio);
-  position: sticky;
-  top: 73px;
-  z-index: 99;
   overflow-x: auto;
 }
 .nwrap { max-width: 1240px; margin: 0 auto; padding: 0 20px; display: flex; gap: 2px; }
@@ -200,6 +503,26 @@ h2 { font-size: 19px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 5
   --texto: var(--texto-principal);
   --tenue: var(--texto-secundario);
 }
+/* Confirmación simple tras la limpieza automática: el detalle
+   técnico (mets, columnas, correcciones...) queda oculto detrás
+   de "Ver detalle de la limpieza" en vez de ser lo primero que se ve. */
+.exito { text-align: center; padding: 32px 24px; }
+.exito .ico-check {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: rgba(47, 214, 153, .14);
+  color: var(--verde);
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.exito .tit { font-size: 18px; font-weight: 700; color: var(--texto-principal); margin-bottom: 6px; }
+.exito .sub { margin: 0 auto; }
+
 .card h3 {
   color: var(--texto-secundario);
   font-size: 12px;
@@ -283,42 +606,40 @@ button {
 button:hover:not(:disabled) { filter: brightness(1.08); }
 button:disabled { opacity: .4; cursor: not-allowed; }
 
-.b-pri {
-  background: linear-gradient(180deg, var(--amarillo-hover), var(--amarillo));
-  color: var(--azul-profundo);
-  box-shadow: 0 6px 16px rgba(255, 198, 41, .35);
+/* Familia de botones de acción: mismo padding, tipografía y alto
+   mínimo en todos, para que ningún CTA se vea más chico que otro.
+   Los colores salen únicamente de tokens.css. */
+.b-pri, .b-sec, .b-ok, .b-no {
   font-weight: 700;
   font-size: 15px;
   padding: 14px 28px;
+}
+.b-pri {
+  background: linear-gradient(180deg, var(--amarillo-hover), var(--amarillo));
+  color: var(--azul-profundo);
+  box-shadow: 0 6px 16px rgba(248, 200, 2, .35);
 }
 .b-pri:hover:not(:disabled) {
   filter: none;
   transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(255, 198, 41, .5);
+  box-shadow: 0 8px 22px rgba(248, 200, 2, .5);
 }
 
 .b-sec {
   background: var(--azul-medio);
-  color: #fff;
+  color: var(--texto-blanco);
   border: 1.5px solid rgba(255, 255, 255, .3);
   font-weight: 600;
-  font-size: 15px;
-  padding: 14px 28px;
 }
 .b-sec:hover:not(:disabled) { border-color: rgba(255, 255, 255, .5); }
 
 .b-ok {
-  background: linear-gradient(180deg, #3ee6a8, var(--verde));
-  color: #052f22;
-  box-shadow: 0 6px 16px rgba(47, 214, 153, .28);
-  font-weight: 700;
-  padding: 10px 22px;
+  background: var(--verde);
+  color: var(--azul-profundo);
 }
 .b-no {
-  background: linear-gradient(180deg, #ff7d81, var(--rojo));
-  color: #fff;
-  box-shadow: 0 6px 16px rgba(255, 106, 111, .28);
-  font-weight: 700;
+  background: var(--rojo);
+  color: var(--texto-blanco);
 }
 .fila { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
@@ -679,9 +1000,11 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
 
 /* ── Celulares ── */
 @media (max-width: 640px) {
-  .hwrap { padding: 12px 14px; gap: 10px; }
-  .marca b { font-size: 16px; }
-  .chip { font-size: 12px; padding: 5px 10px; }
+  .hwrap { padding: 12px 14px; gap: 8px; }
+  .perfil-txt b { font-size: 14px; }
+  .chip { min-width: 0; font-size: 11px; padding: 5px 9px; }
+  .btn-inicio { width: 32px; height: 32px; }
+  .btn-inicio svg { width: 15px; height: 15px; }
   .card { padding: 16px; border-radius: var(--radio-lg); }
   .card h3 { font-size: 11px; }
   h2 { font-size: 17px; }

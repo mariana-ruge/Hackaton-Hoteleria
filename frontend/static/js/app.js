@@ -5,7 +5,7 @@
    Consume la API expuesta por backend/server.py.
    ============================================================ */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const S={catalogo:null,reporteCarga:null,correccionesCarga:[],sesion:null,contadores:[],auditor:'',turno:0,bloqueo:null,filtroDatos:'productos',filtroBodegas:'todas',bodegaSelId:null};
+const S={catalogo:null,reporteCarga:null,correccionesCarga:[],sesion:null,contadores:[],auditor:'',turno:0,bloqueo:null,filtroDatos:'productos',filtroBodegas:'todas',bodegaSelId:null,detalleLimpiezaAbierto:false};
 
 function toast(m,t=''){const e=$('#toast');e.textContent=m;e.className='on '+t;
   clearTimeout(e._t);e._t=setTimeout(()=>e.className='',3400);}
@@ -18,6 +18,108 @@ async function api(url,opt={}){
   const r=await fetch(url,opt);
   let d; try{d=await r.json()}catch{throw new Error('Respuesta no válida del servidor.')}
   return d;
+}
+
+/* ── Splash: primera pantalla, pasa sola a los 2.6s o al tocarla ── */
+let splashTimer=setTimeout(pasarSplash,2600);
+function pasarSplash(){
+  clearTimeout(splashTimer);
+  $('#splash').classList.add('oculto');
+  $('#bienvenida').classList.remove('oculto');
+}
+$('#splash').onclick=pasarSplash;
+
+/* ── Bienvenida ── */
+function cerrarBienvenida(){$('#bienvenida').classList.add('oculto')}
+function abrirBienvenida(){
+  clearTimeout(splashTimer);
+  detenerCamaraQr();
+  $('#splash').classList.add('oculto');
+  $('#qrPantalla').classList.add('oculto');
+  $('#bienvenida').classList.remove('oculto');
+}
+$('#btnInicio').onclick=abrirBienvenida;
+
+/* No hay pantalla de login por SMS todavía, así que ese botón entra
+   directo a la app. "Código QR" abre la cámara real del dispositivo
+   y lee el código con el detector de OpenCV en el backend. */
+$('#btnBienvenidaRef').onclick=()=>cerrarBienvenida();
+$('#btnBienvenidaCargar').onclick=()=>{
+  cerrarBienvenida();
+  $('#qrPantalla').classList.remove('oculto');
+  iniciarCamaraQr();
+};
+$('#btnQrVolver').onclick=()=>{
+  detenerCamaraQr();
+  $('#qrPantalla').classList.add('oculto');
+  $('#bienvenida').classList.remove('oculto');
+};
+$('#btnQrEscanear').onclick=()=>intentarEscaneoQr(false);
+
+/* ── Cámara + lectura de QR ── */
+let qrStream=null, qrAutoTimer=null, qrOcupado=false;
+
+function fijarEstadoQr(msg,tipo){
+  const e=$('#qrEstado');e.textContent=msg||'';e.className='qr-estado'+(tipo?' '+tipo:'');
+}
+
+async function iniciarCamaraQr(){
+  fijarEstadoQr('');
+  if(!navigator.mediaDevices?.getUserMedia){
+    fijarEstadoQr('Este navegador no permite acceder a la cámara.','mal');
+    return;
+  }
+  try{
+    qrStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});
+    const video=$('#qrVideo');
+    video.srcObject=qrStream;
+    await video.play();
+    clearInterval(qrAutoTimer);
+    qrAutoTimer=setInterval(()=>intentarEscaneoQr(true),900);
+  }catch(e){
+    fijarEstadoQr('No se pudo acceder a la cámara. Revisa los permisos del navegador.','mal');
+  }
+}
+
+function detenerCamaraQr(){
+  clearInterval(qrAutoTimer);qrAutoTimer=null;
+  if(qrStream){qrStream.getTracks().forEach(t=>t.stop());qrStream=null;}
+  $('#qrVideo').srcObject=null;
+}
+
+async function intentarEscaneoQr(silencioso){
+  const video=$('#qrVideo');
+  if(qrOcupado||!video.videoWidth)return;
+  qrOcupado=true;
+  if(!silencioso)fijarEstadoQr('Leyendo…');
+  try{
+    const canvas=$('#qrCanvas');
+    canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+    canvas.getContext('2d').drawImage(video,0,0);
+    const imagen=canvas.toDataURL('image/jpeg',0.85);
+    const d=await api('/api/qr/decodificar',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({imagen})});
+    if(d.ok&&d.texto){
+      qrLeido(d.texto);
+    }else if(!silencioso){
+      fijarEstadoQr('No se detectó ningún código QR. Acércate o mejora la luz.','mal');
+    }
+  }catch(e){
+    if(!silencioso)fijarEstadoQr('Error leyendo la cámara.','mal');
+  }finally{
+    qrOcupado=false;
+  }
+}
+
+function qrLeido(texto){
+  detenerCamaraQr();
+  fijarEstadoQr('Código leído correctamente.','bien');
+  $('#qrPantalla').classList.add('oculto');
+  const nombre=texto.length<=40?texto:texto.slice(0,40)+'…';
+  $('#avatar').textContent=iniciales(nombre);
+  $('#perfilNombre').textContent=nombre;
+  $('#perfilSub').textContent='Verificado por código QR';
+  toast('Código QR leído: '+nombre,'bien');
 }
 
 /* ── Navegación ── */
@@ -162,6 +264,18 @@ function pintarCatalogo(d){
         ${esc(f.observaciones)}</td></tr>`).join('');
 
   $('#resDatos').innerHTML=`
+    <div class="card exito">
+      <div class="ico-check">✓</div>
+      <div class="tit">Tu archivo está listo para la validación</div>
+      <p class="sub">${r.filas_final} productos procesados y normalizados automáticamente por el sistema.</p>
+      <div class="fila" style="margin-top:16px;justify-content:center">
+        <button class="b-pri" onclick="ir('sesion')">Continuar</button>
+        <button class="b-sec" type="button" id="btnVerDetalleLimpieza">${S.detalleLimpiezaAbierto
+          ?'Ocultar detalle':'Ver detalle'}</button>
+        <button class="b-sec" onclick="location.href='/api/exportar/catalogo'">Descargar</button>
+      </div>
+    </div>
+    <div id="detalleLimpieza" class="${S.detalleLimpiezaAbierto?'':'oculto'}">
     <div class="mets">
       ${met(r.filas_final,'Productos','bien','productos')}
       ${met(r.negativos_corregidos,'Negativos eliminados',
@@ -238,18 +352,24 @@ function pintarCatalogo(d){
           <th>Unidad</th><th>Stock</th><th>Estado</th><th>Observaciones</th>
         </tr></thead><tbody>${filas}</tbody></table>
       </div>
-      <div class="fila" style="margin-top:14px">
-        <button class="b-pri" onclick="ir('sesion')">Continuar a la sesión</button>
-        <button class="b-sec" onclick="location.href='/api/exportar/catalogo'">
-          Descargar catálogo limpio</button>
-      </div>
+    </div>
     </div>`;
   $$('.met[data-filtro]').forEach(el=>{
     el.classList.toggle('activa',el.dataset.filtro===S.filtroDatos);
     el.onclick=()=>activarFiltroDatos(el.dataset.filtro);
   });
+  $('#btnVerDetalleLimpieza').onclick=toggleDetalleLimpieza;
   habilitar('sesion');
-  if(!d._sinToast)toast(`Catálogo cargado: ${r.filas_final} productos`,'bien');
+  if(!d._sinToast)toast('Tu archivo está listo para la validación','bien');
+}
+
+function toggleDetalleLimpieza(){
+  const det=$('#detalleLimpieza');
+  if(!det)return;
+  S.detalleLimpiezaAbierto=!S.detalleLimpiezaAbierto;
+  det.classList.toggle('oculto',!S.detalleLimpiezaAbierto);
+  $('#btnVerDetalleLimpieza').textContent=S.detalleLimpiezaAbierto
+    ?'Ocultar detalle':'Ver detalle';
 }
 
 $('#selBodega').onchange=e=>renderContextoBodega(e.target.value);
@@ -347,7 +467,7 @@ function pintarBodegas(d,silencioso){
       ${filaSel?renderDetalleBodega(filaSel):''}
       <div class="fila" style="margin-top:14px">
         <button class="b-sec" onclick="location.href='/api/exportar/bodegas'">
-          Descargar bodegas limpias</button></div>
+          Descargar</button></div>
     </div>`;
   $$('.met[data-filtro]').forEach(el=>{
     el.classList.toggle('activa',el.dataset.filtro===S.filtroBodegas);
@@ -526,14 +646,42 @@ window.confirmarBloqueo=async()=>{
 
 /* Dictado por voz (si el navegador lo permite) */
 const RC=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+function limpiarRuidoDictado(texto){
+  // Quita muletillas e interjecciones que el reconocimiento suele
+  // transcribir a partir de ruido de fondo o titubeos ("eh", "mmm"…),
+  // sin tocar el resto de la frase dictada.
+  return String(texto||'').trim()
+    .replace(/\b(eh+|ah+|oh+|mm+|hm+|umm+|uh+|este|o sea)\b/gi, ' ')
+    .replace(/\s+/g, ' ').trim();
+}
+
 if(RC){
-  const rec=new RC();rec.lang='es-CO';rec.interimResults=false;
+  const rec=new RC();
+  rec.lang='es-CO';
+  rec.interimResults=false;
+  rec.maxAlternatives=5;
   $('#btnVoz').onclick=()=>{try{rec.start();$('#btnVoz').textContent='🔴 Escuchando'}
     catch{}};
-  rec.onresult=e=>{$('#dictado').value=e.results[0][0].transcript;previa()};
+  rec.onresult=e=>{
+    // Entre las alternativas que da el motor de voz, se descartan las
+    // que quedan vacías tras filtrar ruido y se usa la de mayor confianza.
+    const candidatos=[...e.results[0]]
+      .map(a=>({texto:limpiarRuidoDictado(a.transcript),confianza:a.confidence||0}))
+      .filter(a=>a.texto.length>1)
+      .sort((a,b)=>b.confianza-a.confianza);
+    if(!candidatos.length){
+      toast('Solo se detectó ruido de fondo. Acércate al micrófono e intenta de nuevo.','mal');
+      return;
+    }
+    $('#dictado').value=candidatos[0].texto;
+    previa();
+  };
   rec.onend=()=>$('#btnVoz').textContent='🎙 Dictar';
-  rec.onerror=()=>{$('#btnVoz').textContent='🎙 Dictar';
-    toast('No pude escuchar. Escribe el conteo.','mal')};
+  rec.onerror=e=>{$('#btnVoz').textContent='🎙 Dictar';
+    toast(e.error==='no-speech'
+      ?'No se detectó voz, solo ruido de fondo. Intenta de nuevo.'
+      :'No pude escuchar. Escribe el conteo.','mal')};
 }else{
   $('#btnVoz').disabled=true;$('#btnVoz').title='Tu navegador no admite dictado por voz';
 }
@@ -650,7 +798,7 @@ async function pintarAuditoria(){
         <button class="b-ok" onclick="dictaminar(${i},'APROBAR','${esc(r.producto)
           .replace(/'/g,"\\'")}','${esc(r.unidad)}')">Aprobar</button>
         <button class="b-sec" onclick="dictaminar(${i},'RECONTEO','${esc(r.producto)
-          .replace(/'/g,"\\'")}','${esc(r.unidad)}')">Ordenar reconteo</button>
+          .replace(/'/g,"\\'")}','${esc(r.unidad)}')">Reconteo</button>
         <button class="b-no" onclick="dictaminar(${i},'RECHAZAR','${esc(r.producto)
           .replace(/'/g,"\\'")}','${esc(r.unidad)}')">Rechazar</button>
       </div>

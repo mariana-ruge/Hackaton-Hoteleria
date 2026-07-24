@@ -16,29 +16,111 @@
 </head>
 <body>
 
-<header>
-  <div class="hwrap">
-    <div class="perfil">
-      <span class="avatar" id="avatar">?</span>
-      <div class="perfil-txt">
-        <b id="perfilNombre">Inventario 360</b>
-        <span id="perfilSub">Colsubsidio · Conteo y auditoría</span>
+<!-- ══════════════ SPLASH ══════════════ -->
+<div class="splash" id="splash">
+  <div class="bienvenida-frame splash-frame">
+    <div class="splash-logo"><img src="/static/img/Logov2.png" alt="Colsubsidio"></div>
+    <div class="bienvenida-badge badge-splash">
+      <img src="/static/img/camion-icono.png" alt="Camión de reparto Colsubsidio">
+    </div>
+    <h1 class="splash-tit">Inventarios más rápidos.<br>Resultados más precisos.</h1>
+    <div class="bienvenida-personas" aria-hidden="true">
+      <img class="persona-lateral" src="/static/img/Persona%202.svg" alt="">
+      <img class="persona-centro" src="/static/img/Persona%201.svg" alt="">
+      <img class="persona-lateral" src="/static/img/persona%203.svg" alt="">
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ BIENVENIDA ══════════════ -->
+<div class="bienvenida oculto" id="bienvenida">
+  <div class="bienvenida-frame">
+    <div class="bienvenida-top">
+      <div class="foto-fondo" aria-hidden="true">
+        <img src="/static/img/Persona%202.svg" alt="">
+        <img src="/static/img/Persona%201.svg" alt="">
+        <img src="/static/img/persona%203.svg" alt="">
+      </div>
+      <div class="bienvenida-badge">
+        <img src="/static/img/camion-icono.png" alt="Camión de reparto Colsubsidio">
       </div>
     </div>
-    <div class="hspace"></div>
-    <span class="chip" id="chipCat">Sin catálogo</span>
-    <span class="chip" id="chipSes">Sin sesión</span>
+    <div class="bienvenida-bottom">
+      <h1>Todo listo para comenzar</h1>
+      <p>Captura cantidades por voz, escanea productos y registra cada conteo con mayor precisión.</p>
+      <div class="bienvenida-acciones">
+        <button class="b-pri" id="btnBienvenidaCargar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM19 19h2v2h-2z"/></svg>
+          Código QR
+        </button>
+        <button class="b-sec" id="btnBienvenidaRef">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Mensaje SMS
+        </button>
+      </div>
+      <div class="bienvenida-marca">
+        <img src="/static/img/Logov2.png" alt="Colsubsidio">
+      </div>
+    </div>
   </div>
-</header>
+</div>
 
-<nav>
-  <div class="nwrap" role="tablist">
-    <button class="tab" role="tab" aria-selected="true" data-v="datos">1 · Datos</button>
-    <button class="tab" role="tab" aria-selected="false" data-v="sesion" disabled>2 · Sesión</button>
-    <button class="tab" role="tab" aria-selected="false" data-v="conteo" disabled>3 · Conteo</button>
-    <button class="tab" role="tab" aria-selected="false" data-v="auditoria" disabled>4 · Auditoría<span class="n oculto" id="badge">0</span></button>
+<!-- ══════════════ ESCANEAR CÓDIGO QR ══════════════ -->
+<div class="qr-pantalla oculto" id="qrPantalla">
+  <div class="bienvenida-frame qr-frame">
+    <div class="qr-top">
+      <button class="qr-volver" id="btnQrVolver" type="button" aria-label="Volver">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div class="qr-badge"><img src="/static/img/camion-icono.png" alt=""></div>
+    </div>
+    <div class="qr-cuerpo">
+      <h1>Escanea el código</h1>
+      <p>Escanea el código QR de tu carnet.</p>
+      <div class="qr-visor">
+        <video id="qrVideo" autoplay playsinline muted></video>
+        <div class="qr-marco"></div>
+      </div>
+      <p class="qr-estado" id="qrEstado"></p>
+      <canvas id="qrCanvas" class="oculto"></canvas>
+    </div>
+    <button class="qr-shutter" id="btnQrEscanear" type="button" aria-label="Escanear código">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.5"/></svg>
+    </button>
   </div>
-</nav>
+</div>
+
+<div class="topbar">
+  <header>
+    <div class="hwrap">
+      <div class="perfil">
+        <span class="avatar" id="avatar">?</span>
+        <div class="perfil-txt">
+          <b id="perfilNombre">Inventario 360</b>
+          <span id="perfilSub">Colsubsidio · Conteo y auditoría</span>
+        </div>
+      </div>
+      <div class="hspace"></div>
+      <button class="btn-inicio" id="btnInicio" type="button"
+              title="Volver a la pantalla principal" aria-label="Volver a la pantalla principal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+      </button>
+    </div>
+    <div class="hchips">
+      <span class="chip" id="chipCat">Sin catálogo</span>
+      <span class="chip" id="chipSes">Sin sesión</span>
+    </div>
+  </header>
+
+  <nav>
+    <div class="nwrap" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-v="datos">1 · Datos</button>
+      <button class="tab" role="tab" aria-selected="false" data-v="sesion" disabled>2 · Sesión</button>
+      <button class="tab" role="tab" aria-selected="false" data-v="conteo" disabled>3 · Conteo</button>
+      <button class="tab" role="tab" aria-selected="false" data-v="auditoria" disabled>4 · Auditoría<span class="n oculto" id="badge">0</span></button>
+    </div>
+  </nav>
+</div>
 
 <main>
 
@@ -129,8 +211,7 @@
             letter-spacing:.1em;font-weight:600">Turno de</span>
       <span class="qui" id="quien">—</span>
       <div class="hspace"></div>
-      <button class="b-sec" id="btnVoz" style="padding:8px 14px;min-height:38px;
-              font-size:13px">🎙 Dictar</button>
+      <button class="b-sec" id="btnVoz">🎙 Dictar</button>
     </div>
     <input id="dictado" class="mono" autocomplete="off"
            placeholder="Arroz Doña Pepa, kilogramos, 25.5">
@@ -144,7 +225,7 @@
        También acepta <code>Azúcar Morena 25 kilos</code> o
        <code>Harina, KGS, dos y medio</code></p>
     <div class="fila" style="margin-top:14px">
-      <button class="b-pri" id="btnRegistrar">Registrar conteo</button>
+      <button class="b-pri" id="btnRegistrar">Registrar</button>
       <button class="b-sec" id="btnLimpiar">Borrar</button>
     </div>
   </div>
@@ -171,7 +252,7 @@
   <div id="listaAud"></div>
   <div class="fila" style="margin-top:18px">
     <button class="b-ok" id="btnCerrar">Cerrar sesión</button>
-    <button class="b-sec" id="btnDescargar">Descargar datos limpios</button>
+    <button class="b-sec" id="btnDescargar">Descargar</button>
   </div>
 </section>
 
