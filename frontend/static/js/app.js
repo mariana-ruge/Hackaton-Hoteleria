@@ -40,10 +40,8 @@ function abrirBienvenida(){
 }
 $('#btnInicio').onclick=abrirBienvenida;
 
-/* No hay pantalla de login por SMS todavía, así que ese botón entra
-   directo a la app. "Código QR" abre la cámara real del dispositivo
-   y lee el código con el detector de OpenCV en el backend. */
-$('#btnBienvenidaRef').onclick=()=>cerrarBienvenida();
+/* "Código QR" abre la cámara real del dispositivo y lee el código
+   con el detector de OpenCV en el backend. */
 $('#btnBienvenidaCargar').onclick=()=>{
   cerrarBienvenida();
   $('#qrPantalla').classList.remove('oculto');
@@ -129,7 +127,7 @@ function ir(v){
   if(v==='auditoria')pintarAuditoria();
   window.scrollTo({top:0,behavior:'smooth'});
 }
-$$('.tab').forEach(t=>t.onclick=()=>{if(!t.disabled)ir(t.dataset.v)});
+$$('.tab').forEach(t=>t.onclick=()=>{if(!t.disabled){ir(t.dataset.v);t.blur()}});
 const habilitar=v=>$$(`.tab[data-v="${v}"]`).forEach(t=>t.disabled=false);
 
 /* ══════════ 1 · CARGA ══════════ */
