@@ -115,27 +115,71 @@ header {
   text-overflow: ellipsis;
 }
 
-/* Chip de estado (catálogo / sesión): mismo tamaño, plano, cristal */
-.chip {
-  display: inline-flex;
+.perfil-nombre-fila {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-width: 112px;
-  background: rgba(255, 255, 255, .08);
-  border: 1px solid rgba(255, 255, 255, .16);
-  border-radius: var(--radio-full);
-  padding: 6px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--texto-blanco);
-  cursor: default;
-  transition: background .15s;
+  gap: 5px;
+  min-width: 0;
 }
-.chip.on {
-  background: rgba(47, 214, 153, .14);
-  border-color: var(--verde);
-  color: var(--verde);
+
+.perfil-nombre-fila b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.icono-verificado {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  object-fit: contain;
+}
+
+.chip-productos{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.chip-productos img{
+  width:18px;
+  height:18px;
+  flex:none;
+  object-fit:contain;
+}
+
+.chip-productos .chip-text{
+  white-space:nowrap;
+  color: var(--amarillo);
+}
+
+/* Chip de estado (catálogo / sesión): mismo tamaño, plano, cristal */
+.chip{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+
+  min-width:140px;
+  height:38px;
+
+  padding:0 16px;
+
+  border-radius:999px;
+
+  background: rgba(6, 55, 122, .55);   /* <-- fondo azul */
+  border:1px solid rgba(108,180,255,.35);
+
+  color:#fff;
+
+  transition:.2s;
+}
+
+.chip.on{
+  background: rgba(6,55,122,.55);
+  border-color: rgba(108,180,255,.35);
+  color:#fff;
 }
 /* Un .chip dentro de una tarjeta blanca no puede heredar texto
    blanco del header: quedaría invisible sobre fondo claro. */
@@ -143,6 +187,96 @@ header {
   background: var(--gris-claro);
   border-color: var(--gris-borde);
   color: var(--texto-principal);
+}
+
+.vista-header{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:24px;
+}
+
+.vista-header-icon{
+  width:52px;
+  height:52px;
+  flex:none;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:50%;
+
+  background:linear-gradient(
+    180deg,
+    rgba(30,96,178,.55),
+    rgba(8, 60, 132, 0.377));
+  border:1px solid rgba(255,255,255,.15);
+  box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.08),
+      0 6px 18px rgba(0,0,0,.18);
+}
+
+.sub-strong{
+  color:rgb(10, 76, 168);
+}
+
+.vista-header-icon img{
+  width:24px;
+  height:24px;
+  object-fit:contain;
+}
+
+.vista-header-content{
+  flex:1;
+  min-width:0;
+}
+
+.vista-header h2{
+  margin:0 0 6px;
+}
+
+.vista-header .sub{
+  margin:0;
+}
+
+.chip-icon{
+  width:18px;
+  height:18px;
+  flex:none;
+  object-fit:contain;
+}
+
+
+.drop-icon{
+  width:56px;
+  height:56px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  margin:0 auto 18px;
+
+  border-radius:50%;
+  background:rgba(30, 90, 158, .12);
+}
+
+.drop-icon img{
+  width:26px;
+  height:26px;
+  object-fit:contain;
+}
+
+.drop{
+  background:#F7F9FC;
+  border:2px dashed #DCE6F3;
+  transition:.25s;
+}
+
+.drop.activo{
+  background:rgba(30,90,158,.08);
+  border-color:var(--azul-claro);
 }
 
 /* Botón para reabrir la pantalla de bienvenida desde cualquier vista */

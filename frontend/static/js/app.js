@@ -256,8 +256,11 @@ function pintarCatalogo(d){
   S.reporteCarga=r;
   S.correccionesCarga=d.correcciones||[];
   S.bodegasCarga=d.bodegas||S.bodegasCarga||[];
-  $('#chipCat').textContent=`${r.filas_final} productos`;
-  $('#chipCat').className='chip on';
+  const chipCatalogo = $('#chipCat');
+  const textoCatalogo = chipCatalogo.querySelector('.chip-text');
+
+  textoCatalogo.textContent = `${r.filas_final} productos`;
+  chipCatalogo.classList.add('on');
 
   const sel=$('#selBodega');
   const bodegaPrevia=sel.value;
@@ -513,8 +516,10 @@ $('#btnSesion').onclick=async()=>{
     `<div class="aviso mal">${esc(d.error)}</div>`;return;}
 
   S.sesion=d.sesion;S.contadores=contadores;S.auditor=auditor;S.turno=0;
-  $('#chipSes').textContent='Sesión '+d.sesion;
-  $('#chipSes').className='chip on';
+  const chipSesion = $('#chipSes');
+  const textoSesion = chipSesion.querySelector('.chip-text');
+  textoSesion.textContent = 'Sesión ' + d.sesion;
+  chipSesion.classList.add('on');
   $('#quien').textContent=contadores[0];
   $('#avatar').textContent=iniciales(auditor);
   $('#perfilNombre').textContent=auditor;

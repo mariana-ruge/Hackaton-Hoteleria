@@ -92,8 +92,13 @@
       <div class="perfil">
         <span class="avatar" id="avatar">?</span>
         <div class="perfil-txt">
-          <b id="perfilNombre">Inventario 360</b>
+          <div class="perfil-nombre-fila">
+            <b id="perfilNombre">Inventario 360</b>
+          </div>
           <span id="perfilSub">Colsubsidio · Conteo y auditoría</span>
+          <span class="verificado-por-qr">Verificado por QR
+            <img class="icono-verificado" src="/static/img/verificacion.svg" alt="Usuario verificado" >
+          </span>
         </div>
       </div>
       <div class="hspace"></div>
@@ -103,9 +108,27 @@
       </button>
     </div>
     <div class="hchips">
-      <span class="chip" id="chipCat">Sin catálogo</span>
-      <span class="chip" id="chipSes">Sin sesión</span>
-    </div>
+
+      <span class="chip chip-productos" id="chipCat">
+  
+          <img
+              src="/static/img/productos.svg"
+              alt=""
+              aria-hidden="true"
+          >
+  
+          <span class="chip-text">
+              Sin catálogo
+          </span>
+  
+      </span>
+  
+      <div id="chipSes" class="chip">
+        <img src="/static/img/usuario.png" alt="" class="chip-icon">
+        <span class="chip-text">Sin sesión</span>
+      </div>
+  
+  </div>
   </header>
 
   <nav>
@@ -123,10 +146,26 @@
 
 <!-- ══════════════ 1 · DATOS ══════════════ -->
 <section class="vista on" id="v-datos">
-  <h2>Cargar y limpiar datos</h2>
-  <p class="sub">Sube el catálogo en Excel o CSV. El sistema detecta el encabezado
-     aunque esté desplazado, normaliza las unidades a un formato único y convierte
-     los stocks negativos o ilegibles en <b>Sin Stock</b>.</p>
+  <div class="vista-header">
+
+    <div class="vista-header-icon">
+        <img src="/static/img/cargar.svg"
+             alt=""
+             aria-hidden="true">
+    </div>
+
+    <div class="vista-header-content">
+
+        <h2>Cargar y limpiar datos</h2>
+
+        <p class="sub">
+            Sube tu archivo y el sistema se encargará de procesarlo
+            <b class="sub-strong">automáticamente</b>.
+        </p>
+
+    </div>
+
+</div>
 
   <div class="card">
     <h3>Tipo de archivo</h3>
@@ -143,11 +182,23 @@
       </label>
     </div>
     <div class="drop" id="drop">
-      <div class="ico">⬒</div>
+
+      <div class="drop-icon">
+          <img
+              src="/static/img/cargar_archivo.svg"
+              alt=""
+              aria-hidden="true">
+      </div>
       <b>Arrastra el archivo o toca para elegir</b>
-      <small>Excel (.xlsx, .xls) o CSV · máximo 32 MB</small>
-      <input type="file" id="archivo" accept=".xlsx,.xls,.xlsm,.csv,.tsv" hidden>
-    </div>
+      <small>
+          Excel (.xlsx, .xls) o CSV · máximo 32 MB
+      </small>
+      <input
+          type="file"
+          id="archivo"
+          accept=".xlsx,.xls,.xlsm,.csv,.tsv"
+          hidden>
+  </div>
   </div>
 
   <div id="resDatos"></div>
