@@ -22,13 +22,16 @@
 
 ## 🎯 El Reto
 
-![Problema - Impacto del Mercado](./docs/images/problema-impacto.png)
+En las bodegas de los hoteles y parques de Colsubsidio, la toma física de inventario depende de una cadena de captura manual: alguien cuenta producto por producto y lo anota en papel, otro lo digita en el sistema, otro más lo revisa. En cada paso se cuelan errores costosos.
+
+El reto es que quien cuenta pueda registrar lo que encontró en cada bodega sin papel, reduciendo errores de digitación y descuadres de inventario.
 
 ---
 
 ## 💡 Nuestra Solución
 
-![Solución - 4 Pilares](./docs/images/solucion-4-pilares.png)
+Inventario 360 es una plataforma inteligente que automatiza el proceso completo de inventario. El operario dicta productos y cantidades en lenguaje natural, el sistema interpreta la información, valida unidades contra el catálogo, y un auditor aprueba o rechaza cada registro. Todo con trazabilidad completa, segregación de funciones y cero contacto manual con papeles.
+
 
 ---
 
@@ -217,7 +220,7 @@ Este proyecto está bajo licencia **MIT**. Ver [`LICENSE`](LICENSE) para detalle
 
 ## 👥 Equipo
 
-Presentado en **Hackathon 2026** — Categoría: _Transformación Digital_
+Presentado en **Hackathon Colsubsidio x 30X 2026** — Categoría: _Reto de Hoteleria: Gestión Inteligente de Usuarios_
 
 **Problema:** Inventarios manuales, lentos y propensos a errores  
 **Solución:** Plataforma inteligente con dictado por voz y validación con IA  
