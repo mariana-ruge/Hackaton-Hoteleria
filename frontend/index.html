@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Inventario 360 · Colsubsidio</title>
+<link rel="icon" type="image/png" href="/static/img/camion-icono.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -169,16 +170,24 @@
 
   <div class="card">
     <h3>Tipo de archivo</h3>
-    <div class="fila" style="margin-bottom:14px">
-      <label style="display:flex;align-items:center;gap:8px;margin:0;
-             text-transform:none;font-size:14px;letter-spacing:0;cursor:pointer">
-        <input type="radio" name="modo" value="catalogo" checked style="width:auto">
-        Catálogo de productos
+    <div class="fila opciones-modo">
+      <label class="modo-opcion">
+        <input
+          type="radio"
+          name="modo"
+          value="catalogo"
+          checked
+        >
+        <span>Catálogo de productos</span>
       </label>
-      <label style="display:flex;align-items:center;gap:8px;margin:0;
-             text-transform:none;font-size:14px;letter-spacing:0;cursor:pointer">
-        <input type="radio" name="modo" value="bodegas" style="width:auto">
-        Maestro de bodegas
+    
+      <label class="modo-opcion">
+        <input
+          type="radio"
+          name="modo"
+          value="bodegas"
+        >
+        <span>Maestro de bodegas</span>
       </label>
     </div>
     <div class="drop" id="drop">
