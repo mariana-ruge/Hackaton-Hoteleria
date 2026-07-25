@@ -197,33 +197,40 @@
 
 <!-- ══════════════ 3 · CONTEO ══════════════ -->
 <section class="vista" id="v-conteo">
-  <h2>Dictado de conteo</h2>
-  <p class="sub">Escribe o dicta el conteo. La unidad se verifica contra el catálogo
-     antes de registrar nada.</p>
+  <div class="conteo-encabezado">
+    <h2>Conteo por voz</h2>
+    <p class="sub">Dicta el producto y la cantidad. Validaremos la información antes de registrarla.</p>
+  </div>
 
   <div class="consola">
     <div class="turno">
-      <span style="font-size:11px;color:var(--texto-secundario);text-transform:uppercase;
-            letter-spacing:.1em;font-weight:600">Turno de</span>
+      <span class="turno-etiqueta">Turno de</span>
       <span class="qui" id="quien">—</span>
     </div>
-    <div class="voz-fila">
-      <button class="b-sec voz-btn" id="btnVoz" title="Dictar por voz">Dictar</button>
+    <div class="conteo-marca" aria-hidden="true">
+      <img src="/static/img/Logov2.png" alt="">
     </div>
+    <div class="voz-copy">
+      <strong>Te estoy escuchando</strong>
+      <span>Di la cantidad en voz alta</span>
+    </div>
+    <div class="voz-fila">
+      <button class="b-sec voz-btn" id="btnVoz" title="Dictar por voz"
+              aria-label="Iniciar dictado por voz">Dictar</button>
+    </div>
+    <p class="voz-ejemplo">Ejemplo:<br><span>“Arroz Doña Pepa, veinticinco punto cinco kilogramos”</span></p>
     <input id="dictado" class="mono" autocomplete="off"
            placeholder="Arroz Doña Pepa, kilogramos, 25.5">
-    <div class="vp" id="vp">
+    <h3 class="interpretacion-titulo oculto" id="interpretacionTitulo">Interpreté esto:</h3>
+    <div class="vp oculto" id="vp">
       <div><div class="k">Producto</div><div class="v" id="vpP">—</div></div>
       <div><div class="k">Unidad</div><div class="v" id="vpU">—</div></div>
       <div><div class="k">Cantidad</div><div class="v" id="vpC">—</div></div>
       <div><div class="k">En catálogo</div><div class="v" id="vpS">—</div></div>
     </div>
-    <p class="pista">Formato: <code>producto, unidad, cantidad</code> ·
-       También acepta <code>Azúcar Morena 25 kilos</code> o
-       <code>Harina, KGS, dos y medio</code></p>
-    <div class="fila" style="margin-top:14px">
-      <button class="b-pri" id="btnRegistrar">Registrar</button>
-      <button class="b-sec" id="btnLimpiar">Borrar</button>
+    <div class="fila conteo-acciones">
+      <button class="b-pri" id="btnRegistrar">Confirmar y registrar</button>
+      <button class="b-sec" id="btnLimpiar">Editar</button>
     </div>
   </div>
 

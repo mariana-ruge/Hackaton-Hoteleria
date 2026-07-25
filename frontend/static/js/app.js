@@ -527,10 +527,17 @@ $('#dictado').onkeydown=e=>{if(e.key==='Enter')$('#btnRegistrar').click()};
 async function previa(){
   const t=$('#dictado').value.trim();
   if(!t){['vpP','vpU','vpC','vpS'].forEach(i=>{
-    $('#'+i).textContent='—';$('#'+i).className='v'});return;}
+    $('#'+i).textContent='—';$('#'+i).className='v'});
+    $('#vp').classList.add('oculto');
+    $('#interpretacionTitulo').classList.add('oculto');
+    return;
+  }
   const d=await api('/api/interpretar',{method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({texto:t,bodega:$('#selBodega').value})});
+  if($('#dictado').value.trim()!==t)return;
+  $('#vp').classList.remove('oculto');
+  $('#interpretacionTitulo').classList.remove('oculto');
   const k=d.dictado;
   const set=(id,val)=>{const e=$('#'+id);
     e.textContent=val??'—';e.className='v'+(val?'':' vacio')};
