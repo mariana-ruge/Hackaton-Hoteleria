@@ -115,27 +115,71 @@ header {
   text-overflow: ellipsis;
 }
 
-/* Chip de estado (catálogo / sesión): mismo tamaño, plano, cristal */
-.chip {
-  display: inline-flex;
+.perfil-nombre-fila {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-width: 112px;
-  background: rgba(255, 255, 255, .08);
-  border: 1px solid rgba(255, 255, 255, .16);
-  border-radius: var(--radio-full);
-  padding: 6px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--texto-blanco);
-  cursor: default;
-  transition: background .15s;
+  gap: 5px;
+  min-width: 0;
 }
-.chip.on {
-  background: rgba(47, 214, 153, .14);
-  border-color: var(--verde);
-  color: var(--verde);
+
+.perfil-nombre-fila b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.icono-verificado {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  object-fit: contain;
+}
+
+.chip-productos{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.chip-productos img{
+  width:18px;
+  height:18px;
+  flex:none;
+  object-fit:contain;
+}
+
+.chip-productos .chip-text{
+  white-space:nowrap;
+  color: var(--amarillo);
+}
+
+/* Chip de estado (catálogo / sesión): mismo tamaño, plano, cristal */
+.chip{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+
+  min-width:140px;
+  height:38px;
+
+  padding:0 16px;
+
+  border-radius:999px;
+
+  background: rgba(6, 55, 122, .55);   /* <-- fondo azul */
+  border:1px solid rgba(108,180,255,.35);
+
+  color:#fff;
+
+  transition:.2s;
+}
+
+.chip.on{
+  background: rgba(6,55,122,.55);
+  border-color: rgba(108,180,255,.35);
+  color:#fff;
 }
 /* Un .chip dentro de una tarjeta blanca no puede heredar texto
    blanco del header: quedaría invisible sobre fondo claro. */
@@ -143,6 +187,96 @@ header {
   background: var(--gris-claro);
   border-color: var(--gris-borde);
   color: var(--texto-principal);
+}
+
+.vista-header{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:24px;
+}
+
+.vista-header-icon{
+  width:52px;
+  height:52px;
+  flex:none;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:50%;
+
+  background:linear-gradient(
+    180deg,
+    rgba(30,96,178,.55),
+    rgba(8, 60, 132, 0.377));
+  border:1px solid rgba(255,255,255,.15);
+  box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.08),
+      0 6px 18px rgba(0,0,0,.18);
+}
+
+.sub-strong{
+  color:rgba(248, 200, 2);
+}
+
+.vista-header-icon img{
+  width:24px;
+  height:24px;
+  object-fit:contain;
+}
+
+.vista-header-content{
+  flex:1;
+  min-width:0;
+}
+
+.vista-header h2{
+  margin:0 0 6px;
+}
+
+.vista-header .sub{
+  margin:0;
+}
+
+.chip-icon{
+  width:18px;
+  height:18px;
+  flex:none;
+  object-fit:contain;
+}
+
+
+.drop-icon{
+  width:56px;
+  height:56px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  margin:0 auto 18px;
+
+  border-radius:50%;
+  background:rgba(30, 90, 158, .12);
+}
+
+.drop-icon img{
+  width:26px;
+  height:26px;
+  object-fit:contain;
+}
+
+.drop{
+  background:#F7F9FC;
+  border:2px dashed #DCE6F3;
+  transition:.25s;
+}
+
+.drop.activo{
+  background:rgba(30,90,158,.08);
+  border-color:var(--azul-claro);
 }
 
 /* Botón para reabrir la pantalla de bienvenida desde cualquier vista */
@@ -469,7 +603,7 @@ nav {
   font-family: var(--fuente-mono);
   font-size: 10px;
   background: var(--rojo);
-  color: #fff;
+  color: #ffffff7b;
   border-radius: var(--radio-full);
   padding: 1px 6px;
   margin-left: 6px;
@@ -659,8 +793,8 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   transition: all .15s;
 }
 .drop:hover, .drop.activo {
-  border-color: var(--amarillo);
-  background: rgba(255, 198, 41, .1);
+  border-color: var(--azul-claro);
+  background: rgba(41, 95, 255, 0.1);
 }
 .drop .ico, .vacio-msg .ico {
   width: 48px;
@@ -1059,7 +1193,7 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--blanco);
+    background: #062B5B;
     border-top: 0;
     box-shadow: 0 -8px 24px rgba(5, 20, 42, .22);
     padding-bottom: env(safe-area-inset-bottom);
@@ -1087,27 +1221,29 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
     position: relative;
   }
   /* Íconos: SVG de Lucide (lucide.dev, licencia ISC) embebidos
-     como mask-image, así se colorean por CSS sin depender de
+como mask-image, así se colorean por CSS sin depender de
      emojis (que varían de dibujo entre SO/navegador). */
   .tab::before {
-    content: "";
-    display: block;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: #93a6bd;
-    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-    -webkit-mask-position: center; mask-position: center;
-    -webkit-mask-size: contain; mask-size: contain;
-    transition: background-color .15s, box-shadow .15s;
+      content: "";
+      display: block;
+      width: 20px;
+      height: 20px;
+      background-color: #ffffff60;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      transition: background-color .2s ease;
   }
   .tab[data-v="datos"]::before {
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cellipse cx='12' cy='5' rx='9' ry='3'/%3E%3Cpath d='M3 5V19A9 3 0 0 0 21 19V5'/%3E%3Cpath d='M3 12A9 3 0 0 0 21 12'/%3E%3C/svg%3E");
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cellipse cx='12' cy='5' rx='9' ry='3'/%3E%3Cpath d='M3 5V19A9 3 0 0 0 21 19V5'/%3E%3Cpath d='M3 12A9 3 0 0 0 21 12'/%3E%3C/svg%3E");
   }
   .tab[data-v="sesion"]::before {
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 21V10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v11'/%3E%3Cpath d='M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1.132-1.803l7.95-3.974a2 2 0 0 1 1.837 0l7.948 3.974A2 2 0 0 1 22 8z'/%3E%3Cpath d='M6 13h12'/%3E%3Cpath d='M6 17h12'/%3E%3C/svg%3E");
-    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 21V10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v11'/%3E%3Cpath d='M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1.132-1.803l7.95-3.974a2 2 0 0 1 1.837 0l7.948 3.974A2 2 0 0 1 22 8z'/%3E%3Cpath d='M6 13h12'/%3E%3Cpath d='M6 17h12'/%3E%3C/svg%3E");
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m3 11 9-8 9 8'/%3E%3Cpath d='M5 10v10h14V10'/%3E%3Cpath d='M9 20v-6h6v6'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m3 11 9-8 9 8'/%3E%3Cpath d='M5 10v10h14V10'/%3E%3Cpath d='M9 20v-6h6v6'/%3E%3C/svg%3E");
   }
   .tab[data-v="conteo"]::before {
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 19v3'/%3E%3Cpath d='M19 10v2a7 7 0 0 1-14 0v-2'/%3E%3Crect x='9' y='2' width='6' height='13' rx='3'/%3E%3C/svg%3E");
@@ -1124,10 +1260,10 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
 
   .tab[aria-selected="true"],
   .tab[aria-selected="true"]:focus,
-  .tab[aria-selected="true"]:active { color: var(--texto-principal) !important; }
+  .tab[aria-selected="true"]:active { color: #ffffff !important; }
   .tab[aria-selected="true"]::before {
-    background-color: var(--azul-profundo);
-    box-shadow: 0 0 0 6px var(--amarillo), 0 4px 12px rgba(255, 198, 41, .45);
+    background-color: #FFFFFF;
+    box-shadow: 0 0 0 6px #FFFFFF, 0 4px 12px rgba(255, 198, 41, .45);
   }
   .tab .n {
     position: absolute;
@@ -1289,3 +1425,147 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
   to   { opacity: 1; transform: translateY(0); }
 }
 .card, .consola, .aud, .bloqueo { animation: aparecer .4s ease-out both; }
+
+
+/* ============================================================
+   DOODLES DE FONDO EN TODA LA APLICACIÓN
+   ============================================================ */
+/* Doodles solamente en la vista de Datos */
+#v-datos {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Capa decorativa */
+#v-datos::before {
+  content: "";
+  position: absolute;
+  inset: -26px -20px -80px;
+  z-index: -1;
+
+  background-image: url("/static/img/background_inicio_doodles-07.svg");
+  background-size: cover;
+  background-position: center top;
+  background-size: 380px auto;
+
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* Asegura que el contenido quede encima */
+#v-datos > * {
+  position: relative;
+  z-index: 1;
+}
+
+.opciones-modo{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.modo-opcion{
+  width:100%;
+  height:56px;
+
+  display:flex;
+  align-items:center;
+  gap:14px;
+
+  padding:0 18px;
+
+  border:1px solid #DCE7F5;
+  border-radius:16px;
+
+  background:#FFFFFF;
+
+  cursor:pointer;
+  transition:.2s;
+
+  box-sizing:border-box;
+}
+
+.modo-opcion span{
+  font-size:15px;
+  font-weight:600;
+  color:#0A2C53;
+
+  letter-spacing:0;
+  text-transform:none;
+  line-height:1;
+}
+
+.modo-opcion:has(input:checked){
+  background:#F5F9FF;
+  border-color:#BFD6F8;
+}
+
+.modo-opcion input[type="radio"]{
+  width:24px;
+  height:24px;
+
+  margin:0;
+  padding:0;
+
+  accent-color:#0167B1;
+
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+/* ============================================================
+   DOODLES - VISTA SESIÓN
+   ============================================================ */
+
+  #v-sesion{
+    position:relative;
+    min-height:calc(100vh - 170px);
+
+    margin-left:-20px;
+    margin-right:-20px;
+
+    padding-left:20px;
+    padding-right:20px;
+
+    overflow:hidden;
+}
+
+#v-sesion::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background-image:url("/static/img/background_inicio_doodles-07.svg");
+    background-repeat:repeat;
+    background-size:520px auto;
+    background-position:center top;
+
+    opacity:.25;
+
+    pointer-events:none;
+    z-index:0;
+}
+
+#v-sesion>*{
+    position:relative;
+    z-index:1;
+}
+
+.vacio-msg .ico{
+  width:auto;
+  height:auto;
+  margin:0 auto 18px;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  background:transparent;
+  border-radius:0;
+}
+
+.vacio-msg .ico img{
+  width:34px;
+  height:34px;
+  object-fit:contain;
+}

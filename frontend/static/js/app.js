@@ -184,7 +184,9 @@ function renderContextoBodega(nombre=''){
   const filas=(S.catalogo||[]).filter(x=>String(x.bodega||'').toLowerCase()===String(nombre||'').toLowerCase());
   if(!nombre||!filas.length){
     host.innerHTML=`<h3>Contexto de la bodega</h3><div class="vacio-msg" style="padding:28px 20px">
-      <div class="ico">◫</div><b>Selecciona una bodega</b>
+      <div class="ico">
+    <img src="/static/img/bodega.svg" alt="Bodega">
+      </div><b>Selecciona una bodega</b>
       <span>Verás cuántas referencias y existencias históricas se usarán para validar el conteo.</span>
     </div>`;
     return;
@@ -256,8 +258,11 @@ function pintarCatalogo(d){
   S.reporteCarga=r;
   S.correccionesCarga=d.correcciones||[];
   S.bodegasCarga=d.bodegas||S.bodegasCarga||[];
-  $('#chipCat').textContent=`${r.filas_final} productos`;
-  $('#chipCat').className='chip on';
+  const chipCatalogo = $('#chipCat');
+  const textoCatalogo = chipCatalogo.querySelector('.chip-text');
+
+  textoCatalogo.textContent = `${r.filas_final} productos`;
+  chipCatalogo.classList.add('on');
 
   const sel=$('#selBodega');
   const bodegaPrevia=sel.value;
@@ -513,8 +518,10 @@ $('#btnSesion').onclick=async()=>{
     `<div class="aviso mal">${esc(d.error)}</div>`;return;}
 
   S.sesion=d.sesion;S.contadores=contadores;S.auditor=auditor;S.turno=0;
-  $('#chipSes').textContent='Sesión '+d.sesion;
-  $('#chipSes').className='chip on';
+  const chipSesion = $('#chipSes');
+  const textoSesion = chipSesion.querySelector('.chip-text');
+  textoSesion.textContent = 'Sesión ' + d.sesion;
+  chipSesion.classList.add('on');
   $('#quien').textContent=contadores[0];
   $('#avatar').textContent=iniciales(auditor);
   $('#perfilNombre').textContent=auditor;
