@@ -765,6 +765,57 @@ tr.fila-clic.activa-fila { background: var(--superficie-2); box-shadow: inset 2p
   border-radius: var(--radio-sm);
   font-weight: 700;
 }
+.voz-fila { margin-bottom: 40px; display: flex; justify-content: center; }
+.voz-btn {
+  width: 104px;
+  height: 104px;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0;
+  color: transparent;
+  background: linear-gradient(180deg, var(--azul-claro), var(--azul-medio));
+  box-shadow:
+    0 0 0 14px rgba(1, 103, 177, .12),
+    0 0 0 28px rgba(1, 103, 177, .06),
+    0 8px 22px rgba(1, 103, 177, .4);
+}
+.voz-btn::before {
+  content: '';
+  flex: none;
+  width: 42px; height: 42px;
+  background-color: var(--texto-blanco);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z'/%3E%3Cpath d='M19 11a1 1 0 1 0-2 0 5 5 0 0 1-10 0 1 1 0 1 0-2 0 7 7 0 0 0 6 6.93V21H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-3.07A7 7 0 0 0 19 11Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z'/%3E%3Cpath d='M19 11a1 1 0 1 0-2 0 5 5 0 0 1-10 0 1 1 0 1 0-2 0 7 7 0 0 0 6 6.93V21H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-3.07A7 7 0 0 0 19 11Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Estado activo: el círculo late y las ondas se expanden */
+.voz-btn.escuchando {
+  background: linear-gradient(180deg, var(--amarillo-hover), var(--amarillo));
+  animation: voz-latido 1.3s ease-in-out infinite;
+}
+.voz-btn.escuchando::before { background-color: var(--azul-profundo); }
+@keyframes voz-latido {
+  0%, 100% {
+    box-shadow:
+      0 0 0 14px rgba(248, 200, 2, .22),
+      0 0 0 28px rgba(248, 200, 2, .1),
+      0 8px 22px rgba(248, 200, 2, .45);
+  }
+  50% {
+    box-shadow:
+      0 0 0 20px rgba(248, 200, 2, .13),
+      0 0 0 40px rgba(248, 200, 2, .04),
+      0 8px 22px rgba(248, 200, 2, .45);
+    transform: scale(1.04);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .voz-btn.escuchando { animation: none; }
+}
+
 #dictado { font-family: var(--fuente-mono); font-size: 17px; padding: 15px; min-height: 54px; }
 .pista { font-size: 12px; color: var(--texto-secundario); margin-top: 9px; }
 .pista code {
