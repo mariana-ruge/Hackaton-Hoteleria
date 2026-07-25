@@ -41,7 +41,7 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.jinja_env.auto_reload = True
 
 # Estado en memoria (para producción: Redis o base de datos)
-ESTADO = {"catalogo": None, "reporte": None, "correcciones": [], "bodegas": None, "sesiones": {}}
+ESTADO = {"catalogo": None, "reporte": None, "correcciones": [], "bodegas": None, "sesiones": {}, "perfil": None}
 SUBIDAS = tempfile.mkdtemp(prefix="inv_")
 
 
@@ -238,25 +238,53 @@ def api_exportar(tipo):
 def api_crear_sesion():
     if ESTADO["catalogo"] is None:
         return _err("Carga primero un catálogo.")
+
     d = request.get_json(force=True)
-    contadores = [c.strip() for c in d.get("contadores", []) if c and c.strip()]
+
+    contadores = [ c.strip() for c in d.get("contadores", []) if c and c.strip() ]
     auditor = (d.get("auditor") or "").strip()
     bodega = (d.get("bodega") or "").strip()
 
     if not bodega:
-        return _err("Selecciona una bodega. La toma física se abre una bodega por sesión.")
+        return _err(
+            "Selecciona una bodega. "
+            "La toma física se abre una bodega por sesión."
+        )
+
     contexto = _contexto_bodega(bodega)
+
     if contexto is None:
-        return _err("La bodega seleccionada no existe en el catálogo cargado.")
+        return _err(
+            "La bodega seleccionada no existe "
+            "en el catálogo cargado."
+        )
 
     try:
-        ses = SesionInventario(bodega, contadores, auditor, ESTADO["catalogo"])
+        ses = SesionInventario(bodega, contadores, auditor, ESTADO["catalogo"] )
     except ValueError as e:
         return _err(str(e))
 
     ESTADO["sesiones"][ses.id] = ses
-    return jsonify({"ok": True, "sesion": ses.id, "resumen": ses.resumen(),
-                    "contexto_bodega": contexto})
+
+    perfil = ESTADO.get("perfil") or {}
+    nombre_perfil = str(perfil.get("nombre", "")).strip()
+
+    if nombre_perfil:
+        if nombre_perfil.casefold() == auditor.casefold():
+            perfil["rol"] = "auditor"
+            perfil["bodega"] = bodega
+
+        elif any(
+            nombre_perfil.casefold() == contador.casefold()
+            for contador in contadores
+        ):
+            perfil["rol"] = "contador"
+            perfil["bodega"] = bodega
+
+        ESTADO["perfil"] = perfil
+
+    return jsonify({
+        "ok": True, "sesion": ses.id, "resumen": ses.resumen(), "contexto_bodega": contexto, "perfil": ESTADO.get("perfil")})
 
 
 @app.route("/api/sesion/<sid>")
@@ -450,21 +478,140 @@ def api_unidades():
          "familia": v["familia"]} for k, v in UNIDADES.items()]})
 
 
+def parsear_perfil_qr(texto):
+    partes = [parte.strip() for parte in str(texto or "").split("|")]
+
+    if len(partes) < 3:
+        return None
+
+    nombre = partes[0]
+    bodega = partes[1]
+
+    documento = partes[2]
+    if documento.upper().startswith("ID"):
+        documento = documento[2:].strip()
+
+    if not nombre or not bodega or not documento:
+        return None
+
+    return {
+        "uid": f"USR-{documento}",
+        "nombre": nombre,
+        "email": "",
+        "telefono": "",
+        "rol": "encargado",
+        "bodega": bodega,
+        "documento": documento,
+        "estado": "Cuenta activa",
+        "ultimo_acceso": "Hoy"
+    }
+
 # ─────────────────────────────────────────── QR (carnet)
 @app.route("/api/qr/decodificar", methods=["POST"])
 def api_qr_decodificar():
-    d = request.get_json(force=True)
-    texto = decodificar_data_url(d.get("imagen"))
+    datos = request.get_json(silent=True) or {}
+
+    texto = decodificar_data_url(datos.get("imagen"))
+
     if not texto:
-        return jsonify({"ok": False,
-                        "error": "No se detectó ningún código QR en la imagen."})
-    return jsonify({"ok": True, "texto": texto})
+        return jsonify({
+            "ok": False,
+            "error": "No se detectó ningún código QR en la imagen."
+        })
+
+    perfil = parsear_perfil_qr(texto)
+
+    if perfil is None:
+        return jsonify({
+            "ok": False,
+            "error": (
+                "El código QR no tiene el formato esperado: "
+                "Nombre | Bodega | ID documento"
+            )
+        })
+
+    ESTADO["perfil"] = perfil
+
+    return jsonify({
+        "ok": True,
+        "texto": texto,
+        "perfil": perfil
+    })
 
 
 @app.errorhandler(413)
 def muy_grande(e):
     return _err("El archivo supera el límite de 32 MB.", 413)
 
+
+@app.route("/api/perfil", methods=["GET"])
+def obtener_perfil():
+    perfil = ESTADO.get("perfil")
+
+    if perfil is None:
+        perfil = {
+            "nombre": "",
+            "email": "",
+            "telefono": "",
+            "rol": "",
+            "bodega": "",
+            "documento": "",
+            "estado": "Cuenta activa",
+            "ultimo_acceso": "Hoy"
+        }
+
+    return jsonify({
+        "ok": True,
+        "perfil": perfil
+    })
+
+
+@app.route("/api/perfil", methods=["PUT"])
+def actualizar_perfil():
+    datos = request.get_json(silent=True) or {}
+
+    nombre = str(datos.get("nombre", "")).strip()
+    email = str(datos.get("email", "")).strip()
+    telefono = str(datos.get("telefono", "")).strip()
+    rol = str(datos.get("rol", "")).strip()
+    bodega = str(datos.get("bodega", "")).strip()
+    documento = str(datos.get("documento", "")).strip()
+
+    if not nombre:
+        return _err("El nombre es obligatorio.")
+
+    if not email:
+        return _err("El correo electrónico es obligatorio.")
+
+    if "@" not in email:
+        return _err("El correo electrónico no es válido.")
+
+    roles_validos = {
+        "contador",
+        "auditor",
+        "encargado",
+        "administrador"
+    }
+
+    if rol and rol not in roles_validos:
+        return _err("El rol seleccionado no es válido.")
+
+    ESTADO["perfil"] = {
+        "nombre": nombre,
+        "email": email,
+        "telefono": telefono,
+        "rol": rol,
+        "bodega": bodega,
+        "documento": documento,
+        "estado": "Cuenta activa",
+        "ultimo_acceso": "Hoy"
+    }
+
+    return jsonify({
+        "ok": True,
+        "mensaje": "Perfil actualizado correctamente.",
+        "perfil": ESTADO["perfil"]
+    })
 
 _cargar_referencia()
 

@@ -114,6 +114,7 @@
       <button class="tab" role="tab" aria-selected="false" data-v="sesion" disabled>2 · Sesión</button>
       <button class="tab" role="tab" aria-selected="false" data-v="conteo" disabled>3 · Conteo</button>
       <button class="tab" role="tab" aria-selected="false" data-v="auditoria" disabled>4 · Auditoría<span class="n oculto" id="badge">0</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-v="perfil" >5 · Perfil</button>
     </div>
   </nav>
 </div>
@@ -249,6 +250,155 @@
   <div class="fila" style="margin-top:18px">
     <button class="b-ok" id="btnCerrar">Cerrar sesión</button>
     <button class="b-sec" id="btnDescargar">Descargar</button>
+  </div>
+</section>
+
+<!-- ══════════════ 5 · PERFIL ══════════════ -->
+<section class="vista" id="v-perfil">
+  <h2>Mi perfil</h2>
+
+  <p class="sub">
+    Consulta y actualiza la información asociada a tu cuenta,
+    tu rol y la bodega asignada.
+  </p>
+
+  <div class="perfil-layout">
+
+    <!-- RESUMEN DEL USUARIO -->
+    <aside class="card perfil-resumen">
+      <div class="perfil-foto-wrap">
+        <div class="perfil-foto">
+          <img id="profileAvatar" src="/static/img/Persona%201.svg" alt="Foto de perfil">
+        </div>
+
+        <label class="b-sec perfil-cambiar-foto" for="profileImageInput">
+          Cambiar foto
+        </label>
+
+        <input id="profileImageInput" type="file" accept="image/png, image/jpeg, image/webp" hidden>
+      </div>
+
+      <div class="perfil-identidad">
+        <strong id="profileDisplayName">
+          Usuario de Inventario 360
+        </strong>
+
+        <span id="profileDisplayRole">
+          Encargado de bodega
+        </span>
+
+        <span class="et et-info" id="profileStatus">
+          Cuenta activa
+        </span>
+      </div>
+
+      <div class="perfil-detalles">
+        <div class="stat-row">
+          <span class="stat-label">Bodega</span>
+          <span class="perfil-dato" id="profileDisplayWarehouse">
+            Sin asignar
+          </span>
+        </div>
+
+        <div class="stat-row">
+          <span class="stat-label">Último acceso</span>
+          <span class="perfil-dato" id="profileLastAccess">
+            Hoy
+          </span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- FORMULARIO -->
+    <div class="card perfil-formulario-card">
+      <h3>Información personal</h3>
+
+      <form id="profileForm">
+        <div class="grid g2">
+
+          <div>
+            <label for="profileName">Nombre completo</label>
+
+            <input id="profileName" name="name" type="text" readonly>
+          </div>
+
+          <div>
+            <label for="profileEmail">Correo electrónico</label>
+
+            <input id="profileEmail" name="email" type="email" readonly>
+          </div>
+
+          <div>
+            <label for="profilePhone">Teléfono</label>
+
+            <input id="profilePhone" name="phone" type="tel" readonly>
+          </div>
+
+          <div>
+            <label for="profileRole">Rol</label>
+
+            <select id="profileRole" name="role" disabled>
+              <option value="">Selecciona un rol</option>
+              <option value="contador">Contador</option>
+              <option value="auditor">Auditor</option>
+              <option value="encargado">Encargado de bodega</option>
+              <option value="administrador">Administrador</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="profileWarehouse">
+              Bodega asignada
+            </label>
+
+            <select id="profileWarehouse" name="warehouse" disabled>
+              <option value="">
+                Selecciona una bodega
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label for="profileDocument">
+              Número de documento
+            </label>
+
+            <input id="profileDocument" name="document" type="text" readonly>
+          </div>
+        </div>
+
+        <div id="profileMessage" class="aviso oculto" role="status" aria-live="polite"></div>
+
+        <div class="fila perfil-acciones-form">
+          <button type="submit" class="b-pri" id="profileSaveButton">
+            Guardar cambios
+          </button>
+
+          <button type="button" class="b-sec" id="profileResetButton">
+            Descartar cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SEGURIDAD -->
+  <div class="card">
+    <h3>Seguridad y sesión</h3>
+
+    <div class="perfil-seguridad">
+      <div>
+        <strong>Cerrar sesión</strong>
+
+        <p class="pista">
+          Finaliza la sesión activa en este dispositivo.
+        </p>
+      </div>
+
+      <button id="logoutButton" type="button" class="b-no">
+        Cerrar sesión
+      </button>
+    </div>
   </div>
 </section>
 

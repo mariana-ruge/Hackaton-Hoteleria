@@ -42,11 +42,11 @@ $('#btnInicio').onclick=abrirBienvenida;
 
 /* "Código QR" abre la cámara real del dispositivo y lee el código
    con el detector de OpenCV en el backend. */
-$('#btnBienvenidaCargar').onclick=()=>{
-  cerrarBienvenida();
+   $('#btnBienvenidaCargar').onclick=()=>{
+    cerrarBienvenida();
   $('#qrPantalla').classList.remove('oculto');
   iniciarCamaraQr();
-};
+  };
 $('#btnQrVolver').onclick=()=>{
   detenerCamaraQr();
   $('#qrPantalla').classList.add('oculto');
@@ -97,11 +97,14 @@ async function intentarEscaneoQr(silencioso){
     const imagen=canvas.toDataURL('image/jpeg',0.85);
     const d=await api('/api/qr/decodificar',{method:'POST',
       headers:{'Content-Type':'application/json'},body:JSON.stringify({imagen})});
-    if(d.ok&&d.texto){
-      qrLeido(d.texto);
-    }else if(!silencioso){
-      fijarEstadoQr('No se detectó ningún código QR. Acércate o mejora la luz.','mal');
-    }
+      if(d.ok && d.perfil){
+        qrLeido(d.perfil);
+      }else if(!silencioso){
+        fijarEstadoQr(
+          d.error || 'No se detectó ningún código QR. Acércate o mejora la luz.',
+          'mal'
+        );
+      }
   }catch(e){
     if(!silencioso)fijarEstadoQr('Error leyendo la cámara.','mal');
   }finally{
@@ -109,15 +112,30 @@ async function intentarEscaneoQr(silencioso){
   }
 }
 
-function qrLeido(texto){
+function qrLeido(perfil){
   detenerCamaraQr();
-  fijarEstadoQr('Código leído correctamente.','bien');
+
+  fijarEstadoQr('Código leído correctamente.', 'bien');
   $('#qrPantalla').classList.add('oculto');
-  const nombre=texto.length<=40?texto:texto.slice(0,40)+'…';
-  $('#avatar').textContent=iniciales(nombre);
-  $('#perfilNombre').textContent=nombre;
-  $('#perfilSub').textContent='Verificado por código QR';
-  toast('Código QR leído: '+nombre,'bien');
+
+  pintarPerfil(perfil);
+
+  $('#avatar').textContent = iniciales(perfil.nombre);
+
+  $('#perfilNombre').textContent =
+    perfil.nombre || 'Inventario 360';
+
+  $('#perfilSub').textContent = [
+    perfil.bodega,
+    perfil.documento ? `ID ${perfil.documento}` : ''
+  ].filter(Boolean).join(' · ');
+
+  toast(
+    `${perfil.nombre} · ${perfil.bodega} · ID ${perfil.documento}`,
+    'bien'
+  );
+
+  ir('perfil');
 }
 
 /* ── Navegación ── */
@@ -125,6 +143,7 @@ function ir(v){
   $$('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.v===v));
   $$('.vista').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
   if(v==='auditoria')pintarAuditoria();
+  if(v === 'perfil'){cargarPerfil();}
   window.scrollTo({top:0,behavior:'smooth'});
 }
 $$('.tab').forEach(t=>t.onclick=()=>{if(!t.disabled){ir(t.dataset.v);t.blur()}});
@@ -860,6 +879,254 @@ $('#btnDescargar').onclick=()=>{
 };
 
 window.ir=ir;
+
+/* ══════════ 5 · PERFIL ══════════ */
+
+let perfilOriginal = null;
+
+
+/* Traduce el código interno del rol a un texto visible */
+function nombreRol(rol){
+  const roles = {
+    contador: 'Contador',
+    auditor: 'Auditor',
+    encargado: 'Encargado de bodega',
+    administrador: 'Administrador'
+  };
+
+  return roles[rol] || 'Sin rol asignado';
+}
+
+
+/* Llena el selector con las bodegas del catálogo cargado */
+function cargarBodegasPerfil(bodegaSeleccionada = ''){
+  const select = $('#profileWarehouse');
+
+  if(!select) return;
+
+  const bodegas = [
+    ...new Set(
+      (S.bodegasCarga || [])
+        .map(b => String(b || '').trim())
+        .filter(Boolean)
+    )
+  ];
+
+  select.innerHTML =
+    '<option value="">Selecciona una bodega</option>' +
+    bodegas.map(bodega => `
+      <option
+        value="${esc(bodega)}"
+        ${bodega === bodegaSeleccionada ? 'selected' : ''}
+      >
+        ${esc(bodega)}
+      </option>
+    `).join('');
+
+  /*
+   * Si el perfil tiene una bodega que no aparece en el catálogo,
+   * la conservamos para no borrar accidentalmente su valor.
+   */
+  if(
+    bodegaSeleccionada &&
+    !bodegas.includes(bodegaSeleccionada)
+  ){
+    select.insertAdjacentHTML(
+      'beforeend',
+      `<option value="${esc(bodegaSeleccionada)}" selected>
+        ${esc(bodegaSeleccionada)}
+      </option>`
+    );
+  }
+}
+
+
+/* Pinta la información en formulario, resumen y encabezado */
+function pintarPerfil(perfil = {}){
+  const nombre = perfil.nombre || '';
+  const rol = perfil.rol || '';
+  const bodega = perfil.bodega || '';
+
+  $('#profileName').value = nombre;
+  $('#profileEmail').value = perfil.email || '';
+  $('#profilePhone').value = perfil.telefono || '';
+  $('#profileRole').value = rol;
+  $('#profileDocument').value = perfil.documento || '';
+
+  cargarBodegasPerfil(bodega);
+
+  $('#profileDisplayName').textContent =
+    nombre || 'Usuario de Inventario 360';
+
+  $('#profileDisplayRole').textContent = nombreRol(rol);
+
+  $('#profileDisplayWarehouse').textContent =
+    bodega || 'Sin asignar';
+
+  $('#profileStatus').textContent =
+    perfil.estado || 'Cuenta activa';
+
+  $('#profileLastAccess').textContent =
+    perfil.ultimo_acceso || 'Hoy';
+
+  /*
+   * También actualiza el encabezado general de la aplicación.
+   */
+  $('#avatar').textContent = iniciales(nombre);
+  $('#perfilNombre').textContent =
+    nombre || 'Inventario 360';
+
+  $('#perfilSub').textContent = [
+    nombreRol(rol),
+    bodega
+  ].filter(Boolean).join(' · ');
+
+  perfilOriginal = {
+    nombre: perfil.nombre || '',
+    email: perfil.email || '',
+    telefono: perfil.telefono || '',
+    rol: perfil.rol || '',
+    bodega: perfil.bodega || '',
+    documento: perfil.documento || '',
+    estado: perfil.estado || 'Cuenta activa',
+    ultimo_acceso: perfil.ultimo_acceso || 'Hoy'
+  };
+}
+
+
+/* Consulta el perfil guardado en server.py */
+async function cargarPerfil(){
+  try{
+    const d = await api('/api/perfil');
+
+    if(!d.ok){
+      throw new Error(d.error || 'No se pudo consultar el perfil.');
+    }
+
+    pintarPerfil(d.perfil || {});
+  }catch(error){
+    toast(error.message, 'mal');
+  }
+}
+
+
+/* Intercepta el formulario para evitar que recargue la página */
+$('#profileForm').onsubmit = async event => {
+  event.preventDefault();
+
+  const boton = $('#profileSaveButton');
+  const textoOriginal = boton.textContent;
+
+  const perfil = {
+    nombre: $('#profileName').value.trim(),
+    email: $('#profileEmail').value.trim(),
+    telefono: $('#profilePhone').value.trim(),
+    rol: $('#profileRole').value,
+    bodega: $('#profileWarehouse').value,
+    documento: $('#profileDocument').value.trim()
+  };
+
+  if(!perfil.nombre){
+    return toast('El nombre es obligatorio.', 'mal');
+  }
+
+  if(!perfil.email){
+    return toast('El correo electrónico es obligatorio.', 'mal');
+  }
+
+  boton.disabled = true;
+  boton.textContent = 'Guardando…';
+
+  try{
+    const d = await api('/api/perfil', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(perfil)
+    });
+
+    if(!d.ok){
+      throw new Error(d.error || 'No se pudo guardar el perfil.');
+    }
+
+    pintarPerfil(d.perfil);
+
+    const mensaje = $('#profileMessage');
+    mensaje.textContent =
+      d.mensaje || 'Perfil actualizado correctamente.';
+    mensaje.className = 'aviso bien';
+
+    toast(
+      d.mensaje || 'Perfil actualizado correctamente.',
+      'bien'
+    );
+
+  }catch(error){
+    const mensaje = $('#profileMessage');
+    mensaje.textContent = error.message;
+    mensaje.className = 'aviso mal';
+
+    toast(error.message, 'mal');
+
+  }finally{
+    boton.disabled = false;
+    boton.textContent = textoOriginal;
+  }
+};
+
+
+/* Descartar cambios y volver al último perfil guardado */
+$('#profileResetButton').onclick = () => {
+  if(!perfilOriginal) return;
+
+  pintarPerfil(perfilOriginal);
+
+  const mensaje = $('#profileMessage');
+  mensaje.textContent = '';
+  mensaje.className = 'aviso oculto';
+
+  toast('Cambios descartados.');
+};
+
+
+/* Vista previa local de la fotografía */
+$('#profileImageInput').onchange = event => {
+  const archivo = event.target.files?.[0];
+
+  if(!archivo) return;
+
+  if(!archivo.type.startsWith('image/')){
+    event.target.value = '';
+    return toast('Selecciona una imagen válida.', 'mal');
+  }
+
+  if(archivo.size > 3 * 1024 * 1024){
+    event.target.value = '';
+    return toast('La imagen no puede superar 3 MB.', 'mal');
+  }
+
+  const lector = new FileReader();
+
+  lector.onload = () => {
+    $('#profileAvatar').src = lector.result;
+    toast('Vista previa actualizada.', 'bien');
+  };
+
+  lector.readAsDataURL(archivo);
+};
+
+
+/* Por ahora solo simula el cierre de sesión */
+$('#logoutButton').onclick = () => {
+  abrirBienvenida();
+  ir('datos');
+  toast('Sesión finalizada.');
+};
+
+
+/* Carga inicial del perfil */
+cargarPerfil();
 
 /* ── Catálogo de referencia precargado por el servidor ── */
 (async function cargarCatalogoPrecargado(){

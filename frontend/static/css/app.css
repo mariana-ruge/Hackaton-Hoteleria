@@ -857,6 +857,102 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
 }
 
 /* ============================================================
+   PERFIL DE USUARIO
+   ============================================================ */
+
+  .perfil-layout {
+    display: grid;
+    grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  
+  .perfil-resumen {
+    text-align: center;
+  }
+  
+  .perfil-formulario-card {
+    height: auto;
+  }
+  
+  .perfil-formulario-card .g2 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  
+  #profileForm {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .perfil-acciones-form {
+    margin-top: 20px;
+  }
+  
+  .perfil-foto-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  
+  .perfil-foto {
+    width: 118px;
+    height: 118px;
+    border-radius: 50%;
+    padding: 5px;
+    background: var(--gris-claro);
+    border: 3px solid var(--amarillo);
+    overflow: hidden;
+    box-shadow: var(--sombra-media);
+  }
+  
+  .perfil-foto img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  
+  .perfil-identidad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-top: 18px;
+  }
+  
+  .perfil-identidad strong {
+    color: var(--texto-principal);
+    font-size: 18px;
+  }
+  
+  .perfil-detalles {
+    margin-top: 22px;
+    border-top: 1px solid var(--gris-borde);
+  }
+  
+  .perfil-dato {
+    max-width: 55%;
+    color: var(--texto-secundario);
+    font-size: 13px;
+    font-weight: 600;
+    text-align: right;
+  }
+  
+  .perfil-acciones-form {
+    margin-top: 20px;
+  }
+  
+  .perfil-seguridad {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+/* ============================================================
    ESTADOS VACÍOS
    ============================================================ */
 .vacio-msg { text-align: center; padding: 52px 20px; color: var(--texto-tenue); }
@@ -970,6 +1066,10 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='m9 14 2 2 4-4'/%3E%3C/svg%3E");
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='m9 14 2 2 4-4'/%3E%3C/svg%3E");
   }
+  .tab[data-v="perfil"]::before {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21a8 8 0 0 0-16 0'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21a8 8 0 0 0-16 0'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+  }
 
   .tab[aria-selected="true"],
   .tab[aria-selected="true"]:focus,
@@ -994,6 +1094,37 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
 
   header { border-radius: 0 0 var(--radio-lg) var(--radio-lg); }
   #toast { bottom: calc(88px + env(safe-area-inset-bottom)); }
+
+  .perfil-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .perfil-formulario-card .g2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  
+  .perfil-resumen {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 18px;
+    text-align: left;
+  }
+  
+  .perfil-foto-wrap {
+    grid-row: 1 / 3;
+  }
+  
+  .perfil-identidad {
+    align-items: flex-start;
+    justify-content: center;
+    margin-top: 0;
+  }
+  
+  .perfil-detalles {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
 }
 
 /* ── Tablets ── */
@@ -1033,6 +1164,39 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
     text-align: center;
   }
   #toast.on { transform: translateY(0); }
+
+  .perfil-resumen {
+    display: block;
+    text-align: center;
+  }
+  
+  .perfil-identidad {
+    align-items: center;
+    margin-top: 16px;
+  }
+  
+  .perfil-detalles {
+    text-align: left;
+  }
+  
+  .perfil-seguridad {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  
+  .perfil-seguridad button,
+  .perfil-acciones-form button {
+    width: 100%;
+  }
+  
+  .perfil-foto {
+    width: 104px;
+    height: 104px;
+  }
+
+  .perfil-formulario-card .g2 {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 380px) {
@@ -1046,6 +1210,14 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
 @media (min-width: 901px) and (max-width: 1180px) {
   main { max-width: 100%; padding: 24px 24px 80px; }
   .mets { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+  
+  .perfil-layout {
+    grid-template-columns: 280px minmax(0, 1fr);
+  }
+
+  .perfil-formulario-card .g2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* ── Monitores anchos ── */
