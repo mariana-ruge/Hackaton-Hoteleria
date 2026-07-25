@@ -136,16 +136,10 @@ ses.exportar("bitacora.json")
 - ✅ Indicadores de progreso y estado
 - ✅ Contraste Colsubsidio (azul #003D82 + amarillo #FFC72B)
 
-![Interfaz - Del inicio al conteo](./docs/images/interfaz-flujo-completo.png)
-
-### Flujo de Conteo
-![Flujo de Conteo](./docs/images/flujo-conteo.png)
-
 ---
 
 ## 📊 Beneficios Cuantificables
 
-![Comparación Antes y Después](./docs/images/antes-despues.png)
 
 | Métrica | Antes | Después | Mejora |
 |---------|-------|---------|--------|
