@@ -1,5 +1,12 @@
 # Inventario 360 · Colsubsidio
 
+**Desarrollado por**
+- Alejandra Gómez Gutiérrez (UX, UI Designer)
+- Edwin Isaac Soto Cossio (Agent Master)
+- Gabriel Santiago Ramírez Velazco (Backend Developer)
+- Pablo Melo (Frontend Developer)
+- Mariana Ruge Vargas (Data Analyst)
+
 Carga, limpia y valida inventarios dictados por voz, con auditoría obligatoria.
 
 ## Arquitectura
