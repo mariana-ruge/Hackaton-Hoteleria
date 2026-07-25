@@ -184,7 +184,9 @@ function renderContextoBodega(nombre=''){
   const filas=(S.catalogo||[]).filter(x=>String(x.bodega||'').toLowerCase()===String(nombre||'').toLowerCase());
   if(!nombre||!filas.length){
     host.innerHTML=`<h3>Contexto de la bodega</h3><div class="vacio-msg" style="padding:28px 20px">
-      <div class="ico">◫</div><b>Selecciona una bodega</b>
+      <div class="ico">
+    <img src="/static/img/bodega.svg" alt="Bodega">
+      </div><b>Selecciona una bodega</b>
       <span>Verás cuántas referencias y existencias históricas se usarán para validar el conteo.</span>
     </div>`;
     return;

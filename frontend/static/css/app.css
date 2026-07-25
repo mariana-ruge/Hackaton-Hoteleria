@@ -1517,43 +1517,55 @@ como mask-image, así se colorean por CSS sin depender de
    DOODLES - VISTA SESIÓN
    ============================================================ */
 
-   #v-sesion{
-    position: relative;
-    min-height: calc(100vh - 170px);
-  
-    margin-left: -20px;
-    margin-right: -20px;
-  
-    padding-left: 20px;
-    padding-right: 20px;
-  
-    background-image: url("/static/img/background_inicio_doodles-07.svg");
-    background-repeat: repeat;
-    background-size: 340px auto;
-    background-position: center top;
-  }
+  #v-sesion{
+    position:relative;
+    min-height:calc(100vh - 170px);
 
-#v-sesion::before{
-  content:"";
+    margin-left:-20px;
+    margin-right:-20px;
 
-  position:absolute;
+    padding-left:20px;
+    padding-right:20px;
 
-  top:-20px;
-  left:-20px;
-  right:-20px;
-  bottom:-120px;
-
-  background-repeat: repeat;
-  background-size:340px auto;
-  background-position:center top;
-
-  opacity:.25;
-
-  pointer-events:none;
-  z-index:0;
+    overflow:hidden;
 }
 
-#v-sesion > *{
+#v-sesion::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background-image:url("/static/img/background_inicio_doodles-07.svg");
+    background-repeat:repeat;
+    background-size:520px auto;
+    background-position:center top;
+
+    opacity:.25;
+
+    pointer-events:none;
+    z-index:0;
+}
+
+#v-sesion>*{
     position:relative;
     z-index:1;
+}
+
+.vacio-msg .ico{
+  width:auto;
+  height:auto;
+  margin:0 auto 18px;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  background:transparent;
+  border-radius:0;
+}
+
+.vacio-msg .ico img{
+  width:34px;
+  height:34px;
+  object-fit:contain;
 }
