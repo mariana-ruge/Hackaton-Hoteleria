@@ -659,8 +659,11 @@ if(RC){
   rec.lang='es-CO';
   rec.interimResults=false;
   rec.maxAlternatives=5;
-  $('#btnVoz').onclick=()=>{try{rec.start();$('#btnVoz').textContent='🔴 Escuchando'}
-    catch{}};
+  $('#btnVoz').onclick=()=>{
+    if($('#btnVoz').classList.contains('escuchando')){try{rec.stop()}catch{}return}
+    try{rec.start();$('#btnVoz').textContent='Escuchando';
+      $('#btnVoz').classList.add('escuchando')}catch{}
+  };
   rec.onresult=e=>{
     // Entre las alternativas que da el motor de voz, se descartan las
     // que quedan vacías tras filtrar ruido y se usa la de mayor confianza.
@@ -675,8 +678,8 @@ if(RC){
     $('#dictado').value=candidatos[0].texto;
     previa();
   };
-  rec.onend=()=>$('#btnVoz').textContent='🎙 Dictar';
-  rec.onerror=e=>{$('#btnVoz').textContent='🎙 Dictar';
+  rec.onend=()=>{$('#btnVoz').textContent='Dictar';$('#btnVoz').classList.remove('escuchando')};
+  rec.onerror=e=>{$('#btnVoz').textContent='Dictar';$('#btnVoz').classList.remove('escuchando');
     toast(e.error==='no-speech'
       ?'No se detectó voz, solo ruido de fondo. Intenta de nuevo.'
       :'No pude escuchar. Escribe el conteo.','mal')};
