@@ -478,15 +478,65 @@ def api_unidades():
          "familia": v["familia"]} for k, v in UNIDADES.items()]})
 
 
+def parsear_perfil_qr(texto):
+    partes = [parte.strip() for parte in str(texto or "").split("|")]
+
+    if len(partes) < 3:
+        return None
+
+    nombre = partes[0]
+    bodega = partes[1]
+
+    documento = partes[2]
+    if documento.upper().startswith("ID"):
+        documento = documento[2:].strip()
+
+    if not nombre or not bodega or not documento:
+        return None
+
+    return {
+        "uid": f"USR-{documento}",
+        "nombre": nombre,
+        "email": "",
+        "telefono": "",
+        "rol": "encargado",
+        "bodega": bodega,
+        "documento": documento,
+        "estado": "Cuenta activa",
+        "ultimo_acceso": "Hoy"
+    }
+
 # ─────────────────────────────────────────── QR (carnet)
 @app.route("/api/qr/decodificar", methods=["POST"])
 def api_qr_decodificar():
-    d = request.get_json(force=True)
-    texto = decodificar_data_url(d.get("imagen"))
+    datos = request.get_json(silent=True) or {}
+
+    texto = decodificar_data_url(datos.get("imagen"))
+
     if not texto:
-        return jsonify({"ok": False,
-                        "error": "No se detectó ningún código QR en la imagen."})
-    return jsonify({"ok": True, "texto": texto})
+        return jsonify({
+            "ok": False,
+            "error": "No se detectó ningún código QR en la imagen."
+        })
+
+    perfil = parsear_perfil_qr(texto)
+
+    if perfil is None:
+        return jsonify({
+            "ok": False,
+            "error": (
+                "El código QR no tiene el formato esperado: "
+                "Nombre | Bodega | ID documento"
+            )
+        })
+
+    ESTADO["perfil"] = perfil
+
+    return jsonify({
+        "ok": True,
+        "texto": texto,
+        "perfil": perfil
+    })
 
 
 @app.errorhandler(413)

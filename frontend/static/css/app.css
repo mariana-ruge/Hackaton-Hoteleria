@@ -860,7 +860,7 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
    PERFIL DE USUARIO
    ============================================================ */
 
-   .perfil-layout {
+  .perfil-layout {
     display: grid;
     grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
     gap: 16px;
@@ -869,6 +869,23 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
   
   .perfil-resumen {
     text-align: center;
+  }
+  
+  .perfil-formulario-card {
+    height: auto;
+  }
+  
+  .perfil-formulario-card .g2 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  
+  #profileForm {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .perfil-acciones-form {
+    margin-top: 20px;
   }
   
   .perfil-foto-wrap {
@@ -1081,6 +1098,10 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
   .perfil-layout {
     grid-template-columns: 1fr;
   }
+
+  .perfil-formulario-card .g2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   
   .perfil-resumen {
     display: grid;
@@ -1103,6 +1124,7 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
     grid-column: 1 / -1;
     width: 100%;
   }
+
 }
 
 /* ── Tablets ── */
@@ -1171,6 +1193,10 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
     width: 104px;
     height: 104px;
   }
+
+  .perfil-formulario-card .g2 {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 380px) {
@@ -1184,6 +1210,14 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
 @media (min-width: 901px) and (max-width: 1180px) {
   main { max-width: 100%; padding: 24px 24px 80px; }
   .mets { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+  
+  .perfil-layout {
+    grid-template-columns: 280px minmax(0, 1fr);
+  }
+
+  .perfil-formulario-card .g2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* ── Monitores anchos ── */

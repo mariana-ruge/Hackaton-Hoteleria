@@ -97,11 +97,14 @@ async function intentarEscaneoQr(silencioso){
     const imagen=canvas.toDataURL('image/jpeg',0.85);
     const d=await api('/api/qr/decodificar',{method:'POST',
       headers:{'Content-Type':'application/json'},body:JSON.stringify({imagen})});
-    if(d.ok&&d.texto){
-      qrLeido(d.texto);
-    }else if(!silencioso){
-      fijarEstadoQr('No se detectó ningún código QR. Acércate o mejora la luz.','mal');
-    }
+      if(d.ok && d.perfil){
+        qrLeido(d.perfil);
+      }else if(!silencioso){
+        fijarEstadoQr(
+          d.error || 'No se detectó ningún código QR. Acércate o mejora la luz.',
+          'mal'
+        );
+      }
   }catch(e){
     if(!silencioso)fijarEstadoQr('Error leyendo la cámara.','mal');
   }finally{
@@ -109,15 +112,30 @@ async function intentarEscaneoQr(silencioso){
   }
 }
 
-function qrLeido(texto){
+function qrLeido(perfil){
   detenerCamaraQr();
-  fijarEstadoQr('Código leído correctamente.','bien');
+
+  fijarEstadoQr('Código leído correctamente.', 'bien');
   $('#qrPantalla').classList.add('oculto');
-  const nombre=texto.length<=40?texto:texto.slice(0,40)+'…';
-  $('#avatar').textContent=iniciales(nombre);
-  $('#perfilNombre').textContent=nombre;
-  $('#perfilSub').textContent='Verificado por código QR';
-  toast('Código QR leído: '+nombre,'bien');
+
+  pintarPerfil(perfil);
+
+  $('#avatar').textContent = iniciales(perfil.nombre);
+
+  $('#perfilNombre').textContent =
+    perfil.nombre || 'Inventario 360';
+
+  $('#perfilSub').textContent = [
+    perfil.bodega,
+    perfil.documento ? `ID ${perfil.documento}` : ''
+  ].filter(Boolean).join(' · ');
+
+  toast(
+    `${perfil.nombre} · ${perfil.bodega} · ID ${perfil.documento}`,
+    'bien'
+  );
+
+  ir('perfil');
 }
 
 /* ── Navegación ── */
