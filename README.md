@@ -214,7 +214,7 @@ Este proyecto está bajo licencia **MIT**. Ver [`LICENSE`](LICENSE) para detalle
 
 ## 👥 Equipo
 
-Presentado en **Hackathon Colsubsidio x 30X 2026** — Categoría: _Reto de Hoteleria: Gestión Inteligente de Usuarios_
+Presentado en **Hackathon Colsubsidio x 30X 2026** — Categoría: _Reto de Hoteleria: Gestión Inteligente de Pedidos para Inventario_
 
 **Problema:** Inventarios manuales, lentos y propensos a errores  
 **Solución:** Plataforma inteligente con dictado por voz y validación con IA  
