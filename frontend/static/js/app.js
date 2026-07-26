@@ -38,7 +38,23 @@ function abrirBienvenida(){
   $('#qrPantalla').classList.add('oculto');
   $('#bienvenida').classList.remove('oculto');
 }
-$('#btnInicio').onclick=abrirBienvenida;
+$('#btnInicio').onclick=()=>mostrarDashboard({nombre:$('#perfilNombre').textContent});
+
+/* ── Cerrar la sesión de conteo activa desde cualquier pantalla ── */
+$('#btnCerrarSesionTop').onclick=async()=>{
+  if(!S.sesion)return;
+  const d=await api('/api/cerrar',{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({sesion:S.sesion,auditor:S.auditor})});
+  if(!d.ok)return toast(d.error||'Faltan registros por aprobar.','mal');
+
+  toast('Sesión '+d.resumen.sesion+' cerrada','bien');
+  S.sesion=null;
+  const chipSesion=$('#chipSes');
+  chipSesion.querySelector('.chip-text').textContent='Sin sesión';
+  chipSesion.classList.remove('on');
+  $('#btnCerrarSesionTop').classList.add('oculto');
+};
 
 /* "Código QR" abre la cámara real del dispositivo y lee el código
    con el detector de OpenCV en el backend. */
@@ -192,10 +208,11 @@ async function mostrarDashboard(perfil){
     }
   }catch(e){/* si el dashboard falla, se puede seguir igual desde el botón de cerrar */}
 
-  $('#dashPantalla').classList.remove('oculto');
+  $$('.vista').forEach(v=>v.classList.remove('on'));
+  $('#dashPantalla').classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 function cerrarDashboard(){
-  $('#dashPantalla').classList.add('oculto');
   ir('datos');
 }
 
@@ -603,6 +620,7 @@ $('#btnSesion').onclick=async()=>{
   const textoSesion = chipSesion.querySelector('.chip-text');
   textoSesion.textContent = 'Sesión ' + d.sesion;
   chipSesion.classList.add('on');
+  $('#btnCerrarSesionTop').classList.remove('oculto');
   $('#quien').textContent=contadores[0];
   $('#avatar').textContent=iniciales(auditor);
   $('#perfilNombre').textContent=auditor;
@@ -969,6 +987,11 @@ $('#btnCerrar').onclick=async()=>{
      ${d.resumen.aprobados} de ${d.resumen.total_registros} registros aprobados ·
      ${d.resumen.anomalias} anomalías graves.</div>`);
   toast('Sesión cerrada','bien');
+  S.sesion=null;
+  const chipSesion=$('#chipSes');
+  chipSesion.querySelector('.chip-text').textContent='Sin sesión';
+  chipSesion.classList.remove('on');
+  $('#btnCerrarSesionTop').classList.add('oculto');
 };
 
 $('#btnDescargar').onclick=()=>{

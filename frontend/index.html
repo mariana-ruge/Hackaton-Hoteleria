@@ -87,8 +87,80 @@
   </div>
 </div>
 
+<!-- ══════════════ POPUP RECOMENDACIÓN DE BENEFICIOS ══════════════ -->
+<div class="beneficio-overlay oculto" id="beneficioOverlay">
+  <div class="beneficio-modal">
+    <button class="beneficio-cerrar" id="btnBeneficioCerrar" type="button" aria-label="Cerrar recomendación">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+    <img id="beneficioImg" src="" alt="Recomendación de Tus Beneficios Colsubsidio">
+  </div>
+</div>
+
+<div class="topbar">
+  <header>
+    <div class="hwrap">
+      <div class="perfil">
+        <span class="avatar" id="avatar">?</span>
+        <div class="perfil-txt">
+          <div class="perfil-nombre-fila">
+            <b id="perfilNombre">Inventario 360</b>
+          </div>
+          <span id="perfilSub">Colsubsidio · Conteo y auditoría</span>
+          <span class="verificado-por-qr">Verificado por QR
+            <img class="icono-verificado" src="/static/img/verificacion.svg" alt="Usuario verificado" >
+          </span>
+        </div>
+      </div>
+      <div class="hspace"></div>
+      <button class="btn-inicio oculto" id="btnCerrarSesionTop" type="button"
+              title="Cerrar sesión de conteo" aria-label="Cerrar sesión de conteo">
+        <img src="/static/img/cerrar-sesion.png" alt="">
+      </button>
+      <button class="btn-inicio" id="btnInicio" type="button"
+              title="Volver a la pantalla principal" aria-label="Volver a la pantalla principal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+      </button>
+    </div>
+    <div class="hchips">
+
+      <span class="chip chip-productos" id="chipCat">
+  
+          <img
+              src="/static/img/productos.svg"
+              alt=""
+              aria-hidden="true"
+          >
+  
+          <span class="chip-text">
+              Sin catálogo
+          </span>
+  
+      </span>
+  
+      <div id="chipSes" class="chip">
+        <img src="/static/img/usuario.png" alt="" class="chip-icon">
+        <span class="chip-text">Sin sesión</span>
+      </div>
+  
+  </div>
+  </header>
+
+  <nav>
+    <div class="nwrap" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-v="datos">1 · Datos</button>
+      <button class="tab" role="tab" aria-selected="false" data-v="sesion" disabled>2 · Sesión</button>
+      <button class="tab" role="tab" aria-selected="false" data-v="conteo" disabled>3 · Conteo</button>
+      <button class="tab" role="tab" aria-selected="false" data-v="auditoria" disabled>4 · Auditoría<span class="n oculto" id="badge">0</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-v="perfil" >5 · Perfil</button>
+    </div>
+  </nav>
+</div>
+
+<main>
+
 <!-- ══════════════ DASHBOARD DE INICIO ══════════════ -->
-<div class="dash-pantalla oculto" id="dashPantalla">
+<section class="vista dash-pantalla" id="dashPantalla">
   <div class="dash-frame">
     <div class="dash-top">
       <div class="perfil">
@@ -142,75 +214,7 @@
     <h3 class="dash-seccion">Progreso del día</h3>
     <div class="dash-progreso"></div>
   </div>
-</div>
-
-<!-- ══════════════ POPUP RECOMENDACIÓN DE BENEFICIOS ══════════════ -->
-<div class="beneficio-overlay oculto" id="beneficioOverlay">
-  <div class="beneficio-modal">
-    <button class="beneficio-cerrar" id="btnBeneficioCerrar" type="button" aria-label="Cerrar recomendación">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-    </button>
-    <img id="beneficioImg" src="" alt="Recomendación de Tus Beneficios Colsubsidio">
-  </div>
-</div>
-
-<div class="topbar">
-  <header>
-    <div class="hwrap">
-      <div class="perfil">
-        <span class="avatar" id="avatar">?</span>
-        <div class="perfil-txt">
-          <div class="perfil-nombre-fila">
-            <b id="perfilNombre">Inventario 360</b>
-          </div>
-          <span id="perfilSub">Colsubsidio · Conteo y auditoría</span>
-          <span class="verificado-por-qr">Verificado por QR
-            <img class="icono-verificado" src="/static/img/verificacion.svg" alt="Usuario verificado" >
-          </span>
-        </div>
-      </div>
-      <div class="hspace"></div>
-      <button class="btn-inicio" id="btnInicio" type="button"
-              title="Volver a la pantalla principal" aria-label="Volver a la pantalla principal">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
-      </button>
-    </div>
-    <div class="hchips">
-
-      <span class="chip chip-productos" id="chipCat">
-  
-          <img
-              src="/static/img/productos.svg"
-              alt=""
-              aria-hidden="true"
-          >
-  
-          <span class="chip-text">
-              Sin catálogo
-          </span>
-  
-      </span>
-  
-      <div id="chipSes" class="chip">
-        <img src="/static/img/usuario.png" alt="" class="chip-icon">
-        <span class="chip-text">Sin sesión</span>
-      </div>
-  
-  </div>
-  </header>
-
-  <nav>
-    <div class="nwrap" role="tablist">
-      <button class="tab" role="tab" aria-selected="true" data-v="datos">1 · Datos</button>
-      <button class="tab" role="tab" aria-selected="false" data-v="sesion" disabled>2 · Sesión</button>
-      <button class="tab" role="tab" aria-selected="false" data-v="conteo" disabled>3 · Conteo</button>
-      <button class="tab" role="tab" aria-selected="false" data-v="auditoria" disabled>4 · Auditoría<span class="n oculto" id="badge">0</span></button>
-      <button class="tab" role="tab" aria-selected="false" data-v="perfil" >5 · Perfil</button>
-    </div>
-  </nav>
-</div>
-
-<main>
+</section>
 
 <!-- ══════════════ 1 · DATOS ══════════════ -->
 <section class="vista on" id="v-datos">
