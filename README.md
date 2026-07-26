@@ -32,7 +32,7 @@ El reto es que quien cuenta pueda registrar lo que encontró en cada bodega sin 
 
 
 ## 🎥 [Ver video demo](https://www.youtube.com/watch?v=POVpk65ToK8)
-## 🎥 [Ver aplicación desplegada](https://inventario-360.onrender.com/)
+## 🌐 [Ver aplicación desplegada](https://inventario-360.onrender.com/)
 
 Inventario 360 es una plataforma inteligente que automatiza el proceso completo de inventario. El operario dicta productos y cantidades en lenguaje natural, el sistema interpreta la información, valida unidades contra el catálogo, y un auditor aprueba o rechaza cada registro. Todo con trazabilidad completa, segregación de funciones y cero contacto manual con papeles.
 
