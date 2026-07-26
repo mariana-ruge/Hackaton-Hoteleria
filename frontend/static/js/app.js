@@ -135,8 +135,89 @@ function qrLeido(perfil){
     'bien'
   );
 
-  ir('perfil');
+  mostrarDashboard(perfil);
+  mostrarBeneficio();
 }
+
+/* ── Dashboard de inicio: pantalla previa con el estado real del día ── */
+function saludoPorHora(){
+  const h=new Date().getHours();
+  return h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';
+}
+function formatoFechaLarga(iso){
+  return new Date(iso+'T00:00:00').toLocaleDateString('es-CO',
+    {day:'numeric',month:'long',year:'numeric'});
+}
+async function mostrarDashboard(perfil){
+  const primerNombre=(perfil.nombre||'').trim().split(/\s+/)[0]||'Usuario';
+  $('#dashAvatar').textContent=iniciales(perfil.nombre);
+  $('#dashNombre').textContent=perfil.nombre||'Usuario';
+  $('#dashNombreHola').textContent=primerNombre;
+  $('#dashSaludoChico').textContent=saludoPorHora();
+  $('#dashSaludoGrande').textContent=saludoPorHora();
+
+  $('#dashTotalHoy').textContent='0';
+  $('#dashPendientes').textContent='0';
+  $('#dashEnProceso').textContent='0';
+  $('#dashFinalizado').textContent='0';
+  $('#dashProximo').innerHTML='<div class="dash-proximo-card"><span class="dash-proximo-sub">Cargando…</span></div>';
+
+  try{
+    const d=await api('/api/dashboard');
+    if(d.ok){
+      $('#dashTotalHoy').textContent=d.hoy.total;
+      $('#dashPendientes').textContent=d.hoy.pendientes;
+      $('#dashEnProceso').textContent=d.hoy.en_proceso;
+      $('#dashFinalizado').textContent=d.hoy.finalizado;
+
+      $('#dashProximo').innerHTML=d.proximo_inventario?`
+        <div class="dash-proximo-card">
+          <b>${esc(d.proximo_inventario.bodega)}</b>
+          <span class="dash-proximo-sub">${d.proximo_inventario.articulos} artículos</span>
+          <div class="dash-proximo-fila">
+            <div class="dash-proximo-fecha">${esc(formatoFechaLarga(d.proximo_inventario.fecha))}
+              <small>${d.proximo_inventario.hora}</small>
+            </div>
+            <button class="b-pri" id="btnDashIniciar" type="button">Iniciar</button>
+          </div>
+        </div>`:`
+        <div class="dash-proximo-card">
+          <b>Sin inventario asignado</b>
+          <span class="dash-proximo-sub">Sube un catálogo para asignar el próximo inventario.</span>
+          <div class="dash-proximo-fila">
+            <button class="b-pri" id="btnDashIniciar" type="button">Cargar catálogo</button>
+          </div>
+        </div>`;
+      $('#btnDashIniciar').onclick=cerrarDashboard;
+    }
+  }catch(e){/* si el dashboard falla, se puede seguir igual desde el botón de cerrar */}
+
+  $('#dashPantalla').classList.remove('oculto');
+}
+function cerrarDashboard(){
+  $('#dashPantalla').classList.add('oculto');
+  ir('datos');
+}
+
+/* ── Pop-up de recomendación de beneficios (Caja Colsubsidio) ──
+   Se muestra cada vez que arranca una sesión, con una imagen
+   aleatoria del flipbook "Tus Beneficios". */
+const BENEFICIOS_IMAGENES=[
+  '/static/img/beneficios/Flipbook_tusBeneficios-Julio_page-0001.jpg',
+  '/static/img/beneficios/Flipbook_tusBeneficios-Julio_page-0002.jpg',
+  '/static/img/beneficios/Flipbook_tusBeneficios-Julio_page-0003.jpg',
+  '/static/img/beneficios/Flipbook_tusBeneficios-Julio_page-0004.jpg',
+  '/static/img/beneficios/Flipbook_tusBeneficios-Julio_page-0005.jpg',
+  '/static/img/beneficios/Flipbook_tusBeneficios-Julio_page-0006.jpg',
+];
+function mostrarBeneficio(){
+  const img=BENEFICIOS_IMAGENES[Math.floor(Math.random()*BENEFICIOS_IMAGENES.length)];
+  $('#beneficioImg').src=img;
+  $('#beneficioOverlay').classList.remove('oculto');
+}
+function cerrarBeneficio(){$('#beneficioOverlay').classList.add('oculto')}
+$('#btnBeneficioCerrar').onclick=cerrarBeneficio;
+$('#beneficioOverlay').onclick=e=>{if(e.target.id==='beneficioOverlay')cerrarBeneficio()};
 
 /* ── Navegación ── */
 function ir(v){
@@ -1145,13 +1226,3 @@ $('#logoutButton').onclick = () => {
 /* Carga inicial del perfil */
 cargarPerfil();
 
-/* ── Catálogo de referencia precargado por el servidor ── */
-(async function cargarCatalogoPrecargado(){
-  try{
-    const d=await api('/api/catalogo');
-    if(!d.ok)return;
-    d._sinToast=true;
-    pintarCatalogo(d);
-    toast(`Catálogo de referencia cargado: ${d.reporte.filas_final} productos`,'bien');
-  }catch(e){/* sin catálogo precargado: se sigue pidiendo carga manual */}
-})();

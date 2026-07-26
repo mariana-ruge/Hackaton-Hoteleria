@@ -8,6 +8,7 @@ import os
 import sys
 import uuid
 import tempfile
+from datetime import datetime, timezone
 
 import pandas as pd
 from flask import Flask, request, jsonify, send_file, render_template
@@ -25,8 +26,6 @@ from auditoria import (SesionInventario, APROBADO, RECONTEO,
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend")
-REFERENCIA_XLSX = os.path.join(BASE_DIR, "..", "data", "Excel apoyo",
-                                "BODEGAS Y STOCK.xlsx")
 
 app = Flask(
     __name__,
@@ -107,30 +106,6 @@ def _payload_catalogo(df, rep, correcciones):
     }
 
 
-def _cargar_referencia():
-    """Precarga el catálogo de referencia (data/Excel apoyo) al iniciar el
-    servidor, así la app arranca con datos reales sin exigir una carga manual."""
-    if not os.path.isfile(REFERENCIA_XLSX):
-        return
-    try:
-        df, rep = limpiar_libro(REFERENCIA_XLSX)
-        if len(df):
-            correcciones = [
-                {"producto": r["producto"], "detalle": r["observaciones"]}
-                for _, r in df[df["observaciones"] != ""].iterrows()
-            ]
-            ESTADO["catalogo"] = df
-            ESTADO["reporte"] = rep
-            ESTADO["correcciones"] = correcciones
-            print(f"  Catálogo de referencia precargado: {rep['filas_final']} productos "
-                  f"({len(rep.get('hojas_catalogo', []))} bodegas)")
-        df_bodegas, rep_bodegas = limpiar_bodegas(REFERENCIA_XLSX, hoja=0)
-        if len(df_bodegas):
-            ESTADO["bodegas"] = df_bodegas
-    except Exception as e:
-        print(f"  Aviso: no se pudo precargar el catálogo de referencia: {e}")
-
-
 def _contexto_bodega(bodega):
     df = _catalogo_bodega(bodega)
     if df is None or not len(df):
@@ -203,6 +178,49 @@ def api_cargar():
         return jsonify(_payload_catalogo(df, rep, correcciones))
     except Exception as e:
         return _err(f"No se pudo procesar el archivo: {e}", 500)
+
+
+@app.route("/api/dashboard")
+def api_dashboard():
+    """Resumen de inicio: cuenta las sesiones de conteo reales del día
+    (no datos ficticios) y calcula la fecha del próximo inventario."""
+    hoy = datetime.now(timezone.utc).date()
+    sesiones_hoy = [s for s in ESTADO["sesiones"].values()
+                    if s.creada[:10] == hoy.isoformat()]
+
+    finalizado = sum(1 for s in sesiones_hoy if s.cerrada)
+    en_proceso = sum(1 for s in sesiones_hoy if not s.cerrada and s.registros)
+    pendientes = sum(1 for s in sesiones_hoy if not s.cerrada and not s.registros)
+
+    if hoy.month == 12:
+        proximo_mes = hoy.replace(year=hoy.year + 1, month=1, day=1)
+    else:
+        proximo_mes = hoy.replace(month=hoy.month + 1, day=1)
+
+    proximo_inventario = None
+    df = ESTADO["catalogo"]
+    if df is not None and len(df):
+        bodegas_disponibles = sorted({b for b in df["bodega"].astype(str) if b.strip()})
+        if bodegas_disponibles:
+            bodega = bodegas_disponibles[0]
+            contexto = _contexto_bodega(bodega)
+            proximo_inventario = {
+                "bodega": bodega,
+                "articulos": contexto["productos"] if contexto else 0,
+                "fecha": proximo_mes.isoformat(),
+                "hora": "09:00",
+            }
+
+    return jsonify({
+        "ok": True,
+        "hoy": {
+            "total": len(sesiones_hoy),
+            "pendientes": pendientes,
+            "en_proceso": en_proceso,
+            "finalizado": finalizado,
+        },
+        "proximo_inventario": proximo_inventario,
+    })
 
 
 @app.route("/api/catalogo")
@@ -612,8 +630,6 @@ def actualizar_perfil():
         "mensaje": "Perfil actualizado correctamente.",
         "perfil": ESTADO["perfil"]
     })
-
-_cargar_referencia()
 
 if __name__ == "__main__":
     print("\n  Inventario 360 · Colsubsidio  →  http://localhost:5000\n")

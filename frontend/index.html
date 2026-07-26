@@ -87,6 +87,73 @@
   </div>
 </div>
 
+<!-- ══════════════ DASHBOARD DE INICIO ══════════════ -->
+<div class="dash-pantalla oculto" id="dashPantalla">
+  <div class="dash-frame">
+    <div class="dash-top">
+      <div class="perfil">
+        <span class="avatar" id="dashAvatar">?</span>
+        <div class="perfil-txt">
+          <span id="dashSaludoChico">Buenos días</span>
+          <b id="dashNombre">Usuario</b>
+        </div>
+      </div>
+      <div class="dash-cuenta">
+        <img src="/static/img/usuario.png" alt="" class="dash-cuenta-ico">
+        Cuenta
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+    </div>
+
+    <div class="dash-hola">
+      <h1>¡Hola <span id="dashNombreHola">Usuario</span>!</h1>
+      <div class="dash-hola-fila">
+        <span id="dashSaludoGrande">Buenos días</span>
+        <img src="/static/img/Logov2.png" alt="Colsubsidio">
+      </div>
+    </div>
+
+    <div class="dash-card-hoy">
+      <div class="dash-card-hoy-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+      </div>
+      <span>Inventarios asignados hoy</span>
+      <b id="dashTotalHoy">0</b>
+    </div>
+
+    <div class="dash-tiles">
+      <div class="dash-tile dash-tile-pend">
+        <span class="dash-tile-k">Pendientes</span>
+        <b id="dashPendientes">0</b>
+      </div>
+      <div class="dash-tile dash-tile-proc">
+        <span class="dash-tile-k">En proceso</span>
+        <b id="dashEnProceso">0</b>
+      </div>
+      <div class="dash-tile dash-tile-fin">
+        <span class="dash-tile-k">Finalizado</span>
+        <b id="dashFinalizado">0</b>
+      </div>
+    </div>
+
+    <h3 class="dash-seccion">Próximo inventario</h3>
+    <div id="dashProximo"></div>
+
+    <h3 class="dash-seccion">Progreso del día</h3>
+    <div class="dash-progreso"></div>
+  </div>
+</div>
+
+<!-- ══════════════ POPUP RECOMENDACIÓN DE BENEFICIOS ══════════════ -->
+<div class="beneficio-overlay oculto" id="beneficioOverlay">
+  <div class="beneficio-modal">
+    <button class="beneficio-cerrar" id="btnBeneficioCerrar" type="button" aria-label="Cerrar recomendación">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+    <img id="beneficioImg" src="" alt="Recomendación de Tus Beneficios Colsubsidio">
+  </div>
+</div>
+
 <div class="topbar">
   <header>
     <div class="hwrap">

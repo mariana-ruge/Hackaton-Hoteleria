@@ -507,6 +507,175 @@ header {
 .qr-badge { background: var(--azul-medio); border: 2px solid rgba(255, 255, 255, .16); }
 .qr-badge img { width: 24px; height: 24px; object-fit: contain; }
 
+/* ── Dashboard de inicio: pantalla previa tras el login por QR ── */
+.dash-pantalla {
+  position: fixed;
+  inset: 0;
+  z-index: 490;
+  display: flex;
+  background: var(--azul-profundo);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .3s ease, visibility .3s ease;
+}
+.dash-pantalla.oculto { opacity: 0; visibility: hidden; pointer-events: none; }
+.dash-frame {
+  width: 100%;
+  overflow-y: auto;
+  padding: 20px 20px 32px;
+}
+.dash-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
+.dash-top .perfil-txt span { color: var(--texto-tenue); font-size: 12px; }
+.dash-cuenta {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: var(--radio-full);
+  background: var(--azul-medio);
+  border: 1px solid rgba(255, 255, 255, .2);
+  color: var(--texto-blanco);
+  font-size: 12px;
+  font-weight: 600;
+}
+.dash-cuenta-ico { width: 16px; height: 16px; border-radius: 50%; object-fit: cover; }
+.dash-cuenta svg { width: 14px; height: 14px; }
+
+.dash-hola { margin-bottom: 20px; }
+.dash-hola h1 { color: var(--texto-blanco); font-size: 24px; font-weight: 800; letter-spacing: -.01em; }
+.dash-hola-fila { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+.dash-hola-fila span { color: var(--texto-tenue); font-size: 14px; }
+.dash-hola-fila img { height: 18px; width: auto; }
+
+.dash-card-hoy {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--azul-medio);
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: var(--radio-xl);
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+.dash-card-hoy-ico {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, .14);
+  color: var(--texto-blanco);
+}
+.dash-card-hoy-ico svg { width: 22px; height: 22px; }
+.dash-card-hoy span { flex: 1; color: var(--texto-blanco); font-size: 14px; font-weight: 500; }
+.dash-card-hoy b { color: var(--texto-blanco); font-size: 30px; font-weight: 800; }
+
+.dash-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 26px; }
+.dash-tile {
+  border-radius: var(--radio-lg);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--texto-blanco);
+}
+.dash-tile-k { font-size: 11px; font-weight: 600; }
+.dash-tile b { font-size: 26px; font-weight: 800; }
+.dash-tile-pend { background: var(--texto-secundario); }
+.dash-tile-proc, .dash-tile-fin { background: var(--azul-medio); }
+
+.dash-seccion {
+  color: var(--texto-blanco);
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+.dash-proximo-card {
+  background: var(--azul-medio);
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: var(--radio-xl);
+  padding: 18px 20px;
+  margin-bottom: 26px;
+}
+.dash-proximo-card b { display: block; color: var(--texto-blanco); font-size: 15px; }
+.dash-proximo-card .dash-proximo-sub { display: block; color: var(--texto-tenue); font-size: 12px; margin-top: 2px; }
+.dash-proximo-fila { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+.dash-proximo-fecha { color: var(--texto-blanco); font-family: var(--fuente-mono); font-size: 13px; }
+.dash-proximo-fecha small { display: block; color: var(--texto-tenue); font-family: var(--fuente); font-size: 11px; margin-top: 2px; }
+
+.dash-progreso {
+  min-height: 96px;
+  border-radius: var(--radio-xl);
+  background: var(--azul-medio);
+  border: 1px solid rgba(255, 255, 255, .16);
+}
+
+@media (min-width: 640px) {
+  .dash-pantalla { align-items: center; justify-content: center; padding: 24px; }
+  .dash-frame {
+    width: min(420px, 100%);
+    max-height: 92vh;
+    border-radius: var(--radio-xl);
+    border: 1px solid rgba(255, 255, 255, .12);
+  }
+}
+
+/* ── Pop-up de recomendación de beneficios (al iniciar sesión) ── */
+.beneficio-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(5, 20, 42, .68);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .25s ease, visibility .25s ease;
+}
+.beneficio-overlay.oculto { opacity: 0; visibility: hidden; pointer-events: none; }
+.beneficio-modal {
+  position: relative;
+  width: min(360px, 100%);
+  max-height: 88vh;
+  border-radius: var(--radio-xl);
+  overflow: hidden;
+  box-shadow: var(--sombra-fuerte);
+  background: var(--blanco);
+}
+.beneficio-modal img {
+  display: block;
+  width: 100%;
+  max-height: 88vh;
+  object-fit: contain;
+  background: var(--blanco);
+}
+.beneficio-cerrar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  min-height: 0;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 20, 42, .55);
+  color: var(--texto-blanco);
+  border: none;
+  z-index: 1;
+}
+.beneficio-cerrar svg { width: 18px; height: 18px; }
+
 .qr-cuerpo { margin-top: 22px; }
 .qr-cuerpo h1 {
   font-size: 22px;
@@ -1534,6 +1703,19 @@ como mask-image, así se colorean por CSS sin depender de
   .perfil-formulario-card .g2 {
     grid-template-columns: 1fr;
   }
+
+  .dash-frame { padding: 16px 16px 26px; }
+  .dash-cuenta { padding: 0 10px; font-size: 11px; }
+  .dash-hola h1 { font-size: 20px; }
+  .dash-hola-fila img { height: 15px; }
+  .dash-card-hoy { padding: 14px 16px; gap: 10px; }
+  .dash-card-hoy b { font-size: 24px; }
+  .dash-tiles { gap: 8px; }
+  .dash-tile { padding: 12px 8px; }
+  .dash-tile b { font-size: 21px; }
+  .dash-proximo-card { padding: 16px; }
+  .dash-proximo-fila { flex-direction: column; align-items: stretch; }
+  .dash-proximo-fila button { width: 100%; }
 }
 
 @media (max-width: 380px) {
@@ -1541,6 +1723,8 @@ como mask-image, así se colorean por CSS sin depender de
   .tab::before { width: 17px; height: 17px; }
   .tab[aria-selected="true"]::before { box-shadow: 0 0 0 5px var(--amarillo), 0 4px 12px rgba(255, 198, 41, .45); }
   .marca span { display: none; }
+  .dash-tiles { grid-template-columns: 1fr; }
+  .dash-tile { flex-direction: row; align-items: center; justify-content: space-between; }
 }
 
 /* ── Laptop compacta / tablet apaisada grande ── */
