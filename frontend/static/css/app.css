@@ -1912,3 +1912,123 @@ como mask-image, así se colorean por CSS sin depender de
   height:34px;
   object-fit:contain;
 }
+
+/* ============================================================
+   ARCHIVOS DE DEMOSTRACIÓN
+   ============================================================ */
+
+   .demo-archivos {
+    width: 100%;
+    margin-top: 22px;
+}
+
+.demo-separador {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    color: var(--texto-secundario);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.demo-separador::before,
+.demo-separador::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--gris-borde);
+}
+
+.btn-demo-excel {
+    width: 100%;
+    min-height: 64px;
+    margin-top: 10px;
+    padding: 12px 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+
+    border: 1px solid rgba(10, 44, 83, 0.12);
+    border-radius: var(--radio-md);
+
+    background: var(--amarillo);
+    color: var(--azul-profundo);
+
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    box-shadow: var(--sombra-suave);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.btn-demo-excel:hover:not(:disabled) {
+    background: var(--amarillo-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--sombra-media);
+    filter: none;
+}
+
+.btn-demo-excel:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-demo-excel:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.btn-demo-icono {
+    flex: none;
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.45);
+
+    font-size: 19px;
+}
+
+.btn-demo-texto {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.btn-demo-texto strong {
+    color: var(--azul-profundo);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.btn-demo-texto small {
+    margin-top: 2px;
+    color: rgba(10, 44, 83, 0.74);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+@media (min-width: 680px) {
+  .demo-archivos {
+      display: block;
+  }
+
+  .btn-demo-excel {
+      width: 100%;
+      margin-top: 12px;
+  }
+}

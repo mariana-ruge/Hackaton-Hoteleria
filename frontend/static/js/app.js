@@ -256,6 +256,84 @@ drop.ondrop=e=>{e.preventDefault();drop.classList.remove('activo');
   if(e.dataTransfer.files[0])subir(e.dataTransfer.files[0])};
 inputArchivo.onchange=e=>{if(e.target.files[0])subir(e.target.files[0])};
 
+const btnDemoBodegasStock = $('#btnDemoBodegasStock');
+
+async function cargarArchivoDemo(tipo, boton) {
+    const textoOriginal = boton.innerHTML;
+
+    boton.disabled = true;
+
+    boton.innerHTML = `
+        <span class="spin"></span>
+
+        <span class="btn-demo-texto">
+            <strong>Procesando archivo...</strong>
+            <small>Aplicando limpieza automática</small>
+        </span>
+    `;
+
+    $('#resDatos').innerHTML = `
+        <div class="card">
+            <span class="spin"></span>
+            Cargando y limpiando el archivo de demostración...
+        </div>
+    `;
+
+    try {
+        const d = await api(`/api/demo/${tipo}`);
+
+        if (!d.ok) {
+            $('#resDatos').innerHTML = `
+                <div class="aviso mal">
+                    <b>No se pudo cargar el archivo de prueba.</b>
+                    <br>
+                    ${esc(d.error || 'Error desconocido.')}
+                </div>
+            `;
+
+            toast(
+                d.error || 'No se pudo cargar el archivo de prueba.',
+                'mal'
+            );
+
+            return;
+        }
+
+        if (d.modo === 'bodegas') {
+            pintarBodegas(d);
+        } else {
+            pintarCatalogo(d);
+        }
+
+        toast(
+            `Archivo ${d.archivo_demo || 'de prueba'} cargado correctamente.`,
+            'bien'
+        );
+
+    } catch (error) {
+        $('#resDatos').innerHTML = `
+            <div class="aviso mal">
+                <b>Error de conexión.</b>
+                <br>
+                ${esc(error.message)}
+            </div>
+        `;
+
+        toast(error.message, 'mal');
+
+    } finally {
+        boton.disabled = false;
+        boton.innerHTML = textoOriginal;
+    }
+}
+
+btnDemoBodegasStock.onclick = () => {
+    cargarArchivoDemo(
+        'bodegas-stock',
+        btnDemoBodegasStock
+    );
+};
+
 async function subir(file){
   const modo=$('input[name=modo]:checked').value;
   $('#resDatos').innerHTML='<div class="card"><span class="spin"></span>Procesando '
