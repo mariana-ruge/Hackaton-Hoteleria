@@ -220,27 +220,33 @@
       y el sistema usa el catálogo e histórico de esa bodega para validar cada conteo en tiempo real.</p>
 
   <div class="card">
-    <h3>Participantes</h3>
+    <h3 class="tit-ico">
+      <img src="/static/css/assets/personas.svg" alt="" aria-hidden="true">
+      Participantes
+    </h3>
     <div class="grid g2" style="margin-bottom:14px">
       <div>
-        <label for="selBodega">Bodega</label>
+        <label class="lbl-ico" for="selBodega"><span class="ico-mini ico-bodega" aria-hidden="true"></span>Bodega</label>
         <select id="selBodega"><option value="">Selecciona una bodega</option></select>
       </div>
       <div>
-        <label for="nAud">Auditor</label>
+        <label class="lbl-ico" for="nAud"><span class="ico-mini ico-auditor" aria-hidden="true"></span>Auditor</label>
         <input id="nAud" placeholder="Nombre del auditor">
       </div>
     </div>
-    <label>Contadores</label>
+    <label class="lbl-ico"><span class="ico-mini ico-auditor" aria-hidden="true"></span>Contadores</label>
     <div class="grid g3" style="margin-bottom:8px">
       <input id="c1" placeholder="Contador 1">
       <input id="c2" placeholder="Contador 2 (opcional)">
       <input id="c3" placeholder="Contador 3 (opcional)">
     </div>
-    <p class="pista">Con dos o más contadores el sistema compara los conteos: si
+    <p class="pista"><span class="ico-mini ico-info" aria-hidden="true"></span>Con dos o más contadores el sistema compara los conteos: si
        difieren más de 5 % ordena un reconteo automático.</p>
     <div class="fila" style="margin-top:16px">
-      <button class="b-pri" id="btnSesion">Abrir sesión</button>
+      <button class="b-pri" id="btnSesion">
+        <img src="/static/css/assets/startt.svg" alt="" aria-hidden="true">
+        Abrir sesión
+      </button>
     </div>
   </div>
 
@@ -283,15 +289,15 @@
       <button class="b-sec voz-btn" id="btnVoz" title="Dictar por voz"
               aria-label="Iniciar dictado por voz">Dictar</button>
     </div>
-    <p class="voz-ejemplo">Ejemplo:<br><span>“Arroz Doña Pepa, veinticinco punto cinco kilogramos”</span></p>
+    <p class="voz-ejemplo"><span class="ico-mini ico-info" aria-hidden="true"></span>Ejemplo:<br><span>“Arroz Doña Pepa, veinticinco punto cinco kilogramos”</span></p>
     <input id="dictado" class="mono" autocomplete="off"
            placeholder="Arroz Doña Pepa, kilogramos, 25.5">
     <h3 class="interpretacion-titulo oculto" id="interpretacionTitulo">Interpreté esto:</h3>
     <div class="vp oculto" id="vp">
-      <div><div class="k">Producto</div><div class="v" id="vpP">—</div></div>
-      <div><div class="k">Unidad</div><div class="v" id="vpU">—</div></div>
-      <div><div class="k">Cantidad</div><div class="v" id="vpC">—</div></div>
-      <div><div class="k">En catálogo</div><div class="v" id="vpS">—</div></div>
+      <div><div class="k"><span class="ico-mini ico-producto" aria-hidden="true"></span>Producto</div><div class="v" id="vpP">—</div></div>
+      <div><div class="k"><span class="ico-mini ico-unidad" aria-hidden="true"></span>Unidad</div><div class="v" id="vpU">—</div></div>
+      <div><div class="k"><span class="ico-mini ico-cantidad" aria-hidden="true"></span>Cantidad</div><div class="v" id="vpC">—</div></div>
+      <div><div class="k"><span class="ico-mini ico-catalogo" aria-hidden="true"></span>En catálogo</div><div class="v" id="vpS">—</div></div>
     </div>
     <div class="fila conteo-acciones">
       <button class="b-pri" id="btnRegistrar">Confirmar y registrar</button>
@@ -443,6 +449,7 @@
 
         <div class="fila perfil-acciones-form">
           <button type="submit" class="b-pri" id="profileSaveButton">
+            <img src="/static/css/assets/disk.svg" alt="" aria-hidden="true">
             Guardar cambios
           </button>
 

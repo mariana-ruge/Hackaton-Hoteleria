@@ -1,0 +1,115 @@
+# Entorno Virtual
+venv/
+env/
+ENV/
+.venv
+.env.local
+.env.*.local
+
+# Variables de entorno
+.env
+.flaskenv
+*.env
+
+# Archivos Python compilados
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribuciones / Empaquetado
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Información de instalación
+.webassets-cache
+
+# Instancia de Flask
+instance/
+.webassets-cache
+
+# ScratchPad y pruebas
+.scratchpad
+.pytest_cache/
+.coverage
+htmlcov/
+.hypothesis/
+
+# Directorios de caché
+.cache/
+*.cache
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+*.log
+logs/
+
+# Bases de datos
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos temporales
+*.tmp
+*.bak
+*.swp
+temp/
+tmp/
+
+# Archivos de configuración local
+config.local.py
+settings.local.py
+
+# Archivos generados
+*.o
+*.a
+*.so
+*.dylib
+
+# Directorios de medios/uploads
+uploads/
+media/
+
+# Reportes
+coverage/
+.coverage.*
+
+# Misc
+.env.example
+.DS_Store
+node_modules/ 
