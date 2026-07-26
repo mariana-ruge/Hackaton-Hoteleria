@@ -781,11 +781,17 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 .b-sec:hover:not(:disabled) { border-color: rgba(255, 255, 255, .5); }
 
 .b-ok {
-  background: var(--verde);
+  background: linear-gradient(180deg, var(--amarillo-hover), var(--amarillo));
   color: var(--azul-profundo);
+  box-shadow: 0 6px 16px rgba(248, 200, 2, .35);
+}
+.b-ok:hover:not(:disabled) {
+  filter: none;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(248, 200, 2, .5);
 }
 .b-no {
-  background: var(--rojo);
+  background: var(--texto-secundario);
   color: var(--texto-blanco);
 }
 .fila { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
@@ -1135,7 +1141,7 @@ main > .aviso.mal, #resDatos > .aviso.mal, #resSesion > .aviso.mal, #resConteo >
    AUDITORÍA
    ============================================================ */
 .aud { border-left: 3px solid var(--gris-borde); padding: 20px; }
-.aud.grave { border-left-color: var(--rojo); }
+.aud.grave { border-left-color: var(--texto-secundario); }
 .aud.media { border-left-color: var(--amarillo); }
 .aud.leve  { border-left-color: var(--verde); }
 .aud .cab { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 13px; flex-wrap: wrap; }
