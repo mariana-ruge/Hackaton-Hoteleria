@@ -2032,3 +2032,40 @@ como mask-image, así se colorean por CSS sin depender de
       margin-top: 12px;
   }
 }
+
+.btn-simular-qr {
+  width: 100%;
+  margin-top: 16px;
+  padding: 14px 20px;
+
+  border: none;
+  border-radius: var(--radio-full);
+
+  background: var(--amarillo);
+  color: var(--azul-profundo);
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow: 0 6px 16px rgba(248, 200, 2, 0.35);
+
+  transition:
+      transform 0.2s ease,
+      background 0.2s ease,
+      box-shadow 0.2s ease;
+}
+
+.btn-simular-qr:hover:not(:disabled) {
+  background: var(--amarillo-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(248, 200, 2, 0.5);
+  filter: none;
+}
+
+.btn-simular-qr:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
