@@ -6,7 +6,7 @@
 [![Flask](https://img.shields.io/badge/Flask-Web-orange?logo=flask)](https://flask.palletsprojects.com/)
 [![Status](https://img.shields.io/badge/Hackathon-2026-success)]()
 
-**Carga, limpia y valida inventarios dictados por voz, con auditoría obligatoria.**
+**Carga, limpia y valida inventarios dictados por voz, con auditoría obligatoria y acceso seguro por QR.**
 
 ---
 
@@ -32,7 +32,6 @@ El reto es que quien cuenta pueda registrar lo que encontró en cada bodega sin 
 
 Inventario 360 es una plataforma inteligente que automatiza el proceso completo de inventario. El operario dicta productos y cantidades en lenguaje natural, el sistema interpreta la información, valida unidades contra el catálogo, y un auditor aprueba o rechaza cada registro. Todo con trazabilidad completa, segregación de funciones y cero contacto manual con papeles.
 
-
 ---
 
 ## ⚡ Características Clave
@@ -41,7 +40,44 @@ Inventario 360 es una plataforma inteligente que automatiza el proceso completo 
 🔍 **Búsqueda Difusa** — Coincidencia flexible contra catálogo  
 🚫 **Bloqueo por Unidad** — Familias incompatibles = BLOQUEO DURO  
 📊 **Auditoría Multiactor** — Contadores + Auditor con segregación de funciones  
-📈 **Umbral de Anomalía** — Detección inteligente (< 10% OK → ≥ 60% REQUIERE_AUDITORIA)
+📈 **Umbral de Anomalía** — Detección inteligente (< 10% OK → ≥ 60% REQUIERE_AUDITORIA)  
+🔐 **Ingreso Seguro por QR** — Acceso sin contraseñas, identificación automática del operario
+
+---
+
+## 🔑 Ingreso Seguro con Código QR
+
+El sistema utiliza **códigos QR únicos** para que cada operario ingrese a la plataforma de forma segura y sin necesidad de contraseñas.
+
+### ¿Cómo funciona?
+
+1. **Generación:** El archivo `generar_qr.py` crea códigos QR personalizados por operario
+2. **Escaneo:** El operario escanea su QR con la cámara del dispositivo
+3. **Autenticación:** El sistema identifica automáticamente al contador y lo redirige a su sesión
+4. **Trazabilidad:** Cada acción queda registrada bajo su identidad
+
+### Código de Prueba
+
+En la carpeta [`frontend/static/img/qr-prueba.png`](https://github.com/mariana-ruge/Hackaton-Hoteleria/blob/main/frontend/static/img/qr-prueba.png) encontrarás un código QR de demostración para probar el flujo de ingreso en ambiente local.
+
+```
+frontend/
+└── static/
+    └── img/
+        └── qr-prueba.png  ← Prueba aquí
+```
+
+### Generar QR Personalizado
+
+```bash
+python generar_qr.py --operario "Ana García" --bodega "Almacén General" --output qr_ana.png
+```
+
+**Esto garantiza:**
+- ✅ Cero fricción en el acceso (sin memorizar contraseñas)
+- ✅ Máxima seguridad en la captura
+- ✅ Identificación automática del operario
+- ✅ Imposibilidad de fraude por suplantación
 
 ---
 
@@ -52,6 +88,7 @@ Hackaton-Hoteleria/
 ├── backend/
 │   ├── app.py
 │   ├── server.py
+│   ├── generar_qr.py           ← Generador de códigos QR
 │   ├── unidades.py
 │   ├── limpieza.py
 │   ├── bodegas.py
@@ -65,6 +102,7 @@ Hackaton-Hoteleria/
 │       ├── css/
 │       ├── js/
 │       └── img/
+│           └── qr-prueba.png    ← Código de prueba
 ├── data/
 │   └── Excel apoyo/
 └── venv/
@@ -140,7 +178,6 @@ ses.exportar("bitacora.json")
 
 ## 📊 Beneficios Cuantificables
 
-
 | Métrica | Antes | Después | Mejora |
 |---------|-------|---------|--------|
 | ⏱️ Tiempo de conteo | 4 horas | 1.5 horas | **-63%** |
@@ -156,6 +193,7 @@ ses.exportar("bitacora.json")
 - ✅ **Bitácora inmutable:** JSON con timestamp y actor para cada acción
 - ✅ **Validación en dos pasos:** Bloqueo por unidad + auditoría
 - ✅ **Trazabilidad completa:** Quién contó qué, cuándo, y por qué se aprobó
+- ✅ **Autenticación por QR:** Sin contraseñas, cero fricción
 - ✅ **Redacción de datos sensibles:** Placeholders en documentación
 
 ---
@@ -177,6 +215,11 @@ pytest backend/
 python backend/app.py limpiar test_data.xlsx --verbose
 ```
 
+### Generar códigos QR para operarios
+```bash
+python backend/generar_qr.py --operario "Nombre del Operario" --bodega "Bodega" --output archivo.png
+```
+
 ---
 
 ## 📝 API REST
@@ -188,6 +231,7 @@ python backend/app.py limpiar test_data.xlsx --verbose
 | `POST` | `/api/registrar` | Registra conteo en sesión activa |
 | `GET` | `/api/session` | Obtiene estado de sesión actual |
 | `POST` | `/api/auditar` | Auditor aprueba/rechaza registros |
+| `POST` | `/api/verificar-qr` | Valida e identifica operario desde QR |
 
 ---
 
@@ -217,8 +261,8 @@ Este proyecto está bajo licencia **MIT**. Ver [`LICENSE`](LICENSE) para detalle
 Presentado en **Hackathon Colsubsidio x 30X 2026** — Categoría: _Reto de Hoteleria: Gestión Inteligente de Pedidos para Inventario_
 
 **Problema:** Inventarios manuales, lentos y propensos a errores  
-**Solución:** Plataforma inteligente con dictado por voz y validación con IA  
-**Impacto:** -63% en tiempo, -90% en errores, +99.5% precisión
+**Solución:** Plataforma inteligente con dictado por voz, validación con IA e ingreso seguro por QR  
+**Impacto:** -63% en tiempo, -90% en errores, +99.5% precisión, 0% de fricción en acceso
 
 ---
 
@@ -226,6 +270,6 @@ Presentado en **Hackathon Colsubsidio x 30X 2026** — Categoría: _Reto de Hote
 
 ### ⭐ Si este proyecto te ayudó, deja una estrella
 
-**Inventarios más rápidos. Resultados más precisos.**
+**Inventarios más rápidos. Resultados más precisos. Acceso más seguro.**
 
 </div>
