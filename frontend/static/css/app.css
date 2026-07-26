@@ -827,6 +827,10 @@ h2 { font-size: 19px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 5
 
 #profileSaveButton { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 #profileSaveButton img { width: 15px; height: 15px; object-fit: contain; flex: none; }
+.perfil-acciones-form button {
+  font-size: 13px;
+  padding: 12px 18px;
+}
 .card .sub { color: var(--texto-secundario); }
 
 /* Filas de estadística con divisor (resumen de bodega, sesión…) */
