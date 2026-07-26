@@ -31,7 +31,7 @@ El reto es que quien cuenta pueda registrar lo que encontró en cada bodega sin 
 ## 💡 Nuestra Solución
 
 
-## 🎥 [Ver video demo](https://drive.google.com/file/d/1KJW4N2Kw9JaROoaV88RrDxAvxC1JH5cN/view?usp=sharing)
+## 🎥 [Ver video demo](https://www.youtube.com/watch?v=POVpk65ToK8)
 
 Inventario 360 es una plataforma inteligente que automatiza el proceso completo de inventario. El operario dicta productos y cantidades en lenguaje natural, el sistema interpreta la información, valida unidades contra el catálogo, y un auditor aprueba o rechaza cada registro. Todo con trazabilidad completa, segregación de funciones y cero contacto manual con papeles.
 
