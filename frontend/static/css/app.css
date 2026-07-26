@@ -368,6 +368,8 @@ header {
 .bienvenida-badge img { width: 60px; height: 60px; object-fit: contain; }
 
 .bienvenida-bottom {
+  position: relative;
+  overflow: hidden;
   flex: 1 1 60%;
   background: var(--azul-profundo);
   display: flex;
@@ -376,6 +378,15 @@ header {
   text-align: center;
   padding: 66px 28px 28px;
 }
+.bienvenida-bottom::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/static/img/doodles__-07.svg") center/cover no-repeat;
+  opacity: .06;
+  pointer-events: none;
+}
+.bienvenida-bottom > * { position: relative; z-index: 1; }
 .bienvenida-bottom h1 {
   font-size: 25px;
   font-weight: 800;
@@ -829,7 +840,16 @@ h2 { font-size: 19px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 5
 #profileSaveButton img { width: 15px; height: 15px; object-fit: contain; flex: none; }
 .perfil-acciones-form button {
   font-size: 13px;
-  padding: 12px 18px;
+  padding: 12px 14px;
+}
+@media (min-width: 641px) {
+  .perfil-acciones-form.fila { flex-wrap: nowrap; }
+  .perfil-acciones-form button {
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: normal;
+    text-align: center;
+  }
 }
 .card .sub { color: var(--texto-secundario); }
 
