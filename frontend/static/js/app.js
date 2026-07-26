@@ -70,6 +70,35 @@ $('#btnQrVolver').onclick=()=>{
 };
 $('#btnQrEscanear').onclick=()=>intentarEscaneoQr(false);
 
+const btnSimularQr = $('#btnSimularQr');
+
+if (btnSimularQr) {
+  btnSimularQr.onclick = () => {
+    btnSimularQr.disabled = true;
+    btnSimularQr.textContent = 'Simulando...';
+
+    fijarEstadoQr('Simulando lectura del código QR...');
+
+    const perfilSimulado = {
+      nombre: 'Jenny Gutierrez',
+      bodega: 'Restaurante',
+      documento: '987654',
+      rol: 'contador',
+      email: 'jenny.gutierrez@colsubsidio.com',
+      telefono: '3001234567',
+      estado: 'Cuenta activa',
+      ultimo_acceso: 'Hoy'
+    };
+
+    setTimeout(() => {
+      qrLeido(perfilSimulado);
+
+      btnSimularQr.disabled = false;
+      btnSimularQr.textContent = 'Simular QR';
+    }, 600);
+  };
+}
+
 /* ── Cámara + lectura de QR ── */
 let qrStream=null, qrAutoTimer=null, qrOcupado=false;
 
