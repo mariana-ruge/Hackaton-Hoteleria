@@ -179,6 +179,86 @@ def api_cargar():
     except Exception as e:
         return _err(f"No se pudo procesar el archivo: {e}", 500)
 
+@app.route("/api/demo/<tipo>", methods=["GET"])
+def api_cargar_demo(tipo):
+    """
+    Carga uno de los archivos Excel incluidos en el proyecto
+    y ejecuta la misma limpieza utilizada por /api/cargar.
+    """
+
+    archivos_demo = {
+        "bodegas-stock": "BODEGAS Y STOCK.xlsx",
+        "stock-disponible": "BODEGAS Y STOCK.xlsx - BODEGAS DISPONIBLES.csv",
+    }
+
+    nombre_archivo = archivos_demo.get(tipo)
+
+    if not nombre_archivo:
+        return _err("Archivo de demostración no válido.", 404)
+
+    ruta = os.path.join(
+    BASE_DIR,
+    "..",
+    "data",
+    "Excel apoyo",
+    nombre_archivo,
+)
+
+    ruta = os.path.abspath(ruta)
+
+    if not os.path.isfile(ruta):
+        return _err(
+            f"No se encontró el archivo de demostración: {nombre_archivo}",
+            404,
+        )
+
+    try:
+        if es_excel(ruta):
+            df, rep = limpiar_libro(ruta)
+
+            # Intenta obtener también el maestro de bodegas,
+            # igual que sucede durante la carga normal.
+            try:
+                df_bodegas, rep_bodegas = limpiar_bodegas(ruta, hoja=0)
+
+                if len(df_bodegas):
+                    ESTADO["bodegas"] = df_bodegas
+
+            except Exception:
+                pass
+
+        else:
+            df, rep = limpiar(ruta)
+
+        if not len(df):
+            return _err(
+                "La limpieza terminó, pero no quedaron productos válidos.",
+                400,
+            )
+
+        ESTADO["catalogo"] = df
+        ESTADO["reporte"] = rep
+
+        correcciones = [
+            {
+                "producto": fila["producto"],
+                "detalle": fila["observaciones"],
+            }
+            for _, fila in df[df["observaciones"] != ""].iterrows()
+        ]
+
+        ESTADO["correcciones"] = correcciones
+
+        respuesta = _payload_catalogo(df, rep, correcciones)
+        respuesta["archivo_demo"] = nombre_archivo
+
+        return jsonify(respuesta)
+
+    except Exception as error:
+        return _err(
+            f"No se pudo procesar el archivo de demostración: {error}",
+            500,
+        )
 
 @app.route("/api/dashboard")
 def api_dashboard():
