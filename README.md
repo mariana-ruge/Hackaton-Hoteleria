@@ -49,6 +49,11 @@ Inventario 360 es una plataforma inteligente que automatiza el proceso completo 
 
 El sistema utiliza **códigos QR únicos** para que cada operario ingrese a la plataforma de forma segura y sin necesidad de contraseñas.
 
+
+## Usarlo para el demo 
+
+![Imagen del proyecto](https://res.cloudinary.com/panmecar/image/upload/v1785078857/colsubsidio/WhatsApp_Image_2026-07-23_at_20.53.06_vazeaf.jpg)
+
 ### ¿Cómo funciona?
 
 1. **Generación:** El archivo `generar_qr.py` crea códigos QR personalizados por operario
